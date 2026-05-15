@@ -1,0 +1,10 @@
+pandas
+pyarrow
+requests
+python-dotenv
+yfinance
+fredapi
+pytrends
+google-cloud-bigquery
+statsmodels
+scipy
