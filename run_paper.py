@@ -295,7 +295,7 @@ def step_backtest(assets: list, har_results: dict) -> dict:
 
         # Attempt to load daily returns from OHLCV
         ohlcv_map = {
-            "btc":   os.path.join(DATA_RAW_DIR, "ohlcv", "binance_btc_1d.parquet"),
+            "btc":   os.path.join(DATA_RAW_DIR, "ohlcv", "btc_1d.parquet"),
             "spx":   os.path.join(DATA_RAW_DIR, "ohlcv", "spx_1d.parquet"),
             "nifty": os.path.join(DATA_RAW_DIR, "ohlcv", "nifty_1d.parquet"),
         }
