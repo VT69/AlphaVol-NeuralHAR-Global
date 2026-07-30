@@ -1,0 +1,4 @@
+Model,Asset,QLIKE_DM,QLIKE_p,QLIKE_sig,QLIKE_better,MSE_DM,MSE_p,MSE_sig,MSE_better,OOS_R2
+Neural-HAR,BTC,2.2259,0.026,**,B,3.3239,0.0009,***,B,0.1882
+Neural-HAR,SPX,5.861,0.0,***,B,-2.2051,0.0274,**,A,-0.1394
+Neural-HAR,NIFTY50,1.8118,0.07,*,B,-3.8102,0.0001,***,A,-0.1445

@@ -35,6 +35,8 @@ class GatedResidualNetwork(nn.Module):
         h = self.dropout(self.fc2(self.elu(self.fc1(x))))
         h = self.glu(h)
         res = self.res_proj(x)
+        return self.layer_norm(h + res)
+
 class DeepGRN(nn.Module):
     def __init__(self, input_dim, hidden_dim=16, dropout=0.3, num_layers=2):
         super(DeepGRN, self).__init__()

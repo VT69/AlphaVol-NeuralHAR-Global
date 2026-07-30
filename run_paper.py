@@ -115,13 +115,10 @@ def step_har(assets: list) -> dict:
 # STEP 2 — Neural-HAR Training  (GRN + HAR prior)
 # ─────────────────────────────────────────────────────────────────────────────
 
-def step_neural(assets: list,
-                epochs: int = 100,
-                lr: float = 5e-4,
-                hidden_dim: int = 32) -> dict:
-    """Train Neural-HAR (GRN residual corrector) for each asset."""
+def step_neural(assets: list, n_trials: int = 40) -> dict:
+    """Train Neural-HAR (GRN+Transformer ensemble) for each asset."""
     logger.info("\n" + "=" * 70)
-    logger.info("STEP 2 — Neural-HAR Training  (HAR prior + GRN residual)")
+    logger.info("STEP 2 — Neural-HAR Training  (Ensemble: GRN + Transformer)")
     logger.info("=" * 70)
     from src.models.train_neural_har import train_asset
 
@@ -129,12 +126,7 @@ def step_neural(assets: list,
     for asset in assets:
         logger.info(f"\n  Training Neural-HAR for {asset.upper()}...")
         try:
-            preds, acts = train_asset(
-                asset,
-                epochs=epochs,
-                lr=lr,
-                hidden_dim=hidden_dim,
-            )
+            preds, acts = train_asset(asset, n_trials=n_trials)
             if preds is not None:
                 neural_results[asset] = {"forecasts": preds, "actuals": acts}
                 logger.info(f"  Neural-HAR training complete for {asset.upper()}")

@@ -25,6 +25,7 @@ import pandas as pd
 import torch
 import torch.nn as nn
 import torch.optim as optim
+from torch.optim.lr_scheduler import CosineAnnealingLR
 from torch.utils.data import DataLoader, TensorDataset
 from sklearn.preprocessing import StandardScaler
 import statsmodels.api as sm
@@ -77,12 +78,17 @@ def _to_tensor(df_split, exo_arr):
     return TensorDataset(X_har, X_exo, y)
 
 
-def run_optuna_tuning(train_loader, val_loader, num_exo, betas, intercept, n_trials=15):
-    """Run Optuna to find best hyperparameters."""
-    logger.info(f"  Starting Optuna Hyperparameter Tuning ({n_trials} trials)...")
+def run_optuna_tuning(train_loader, val_loader, num_exo, betas, intercept, 
+                      n_trials=40, arch_type=None):
+    """Run Optuna to find best hyperparameters for a given architecture."""
+    arch_label = arch_type if arch_type else "auto"
+    logger.info(f"  Optuna HPO ({n_trials} trials, arch={arch_label})...")
     
     def objective(trial):
-        arch_type = trial.suggest_categorical("arch_type", ["grn", "transformer"])
+        if arch_type is None:
+            _arch = trial.suggest_categorical("arch_type", ["grn", "transformer"])
+        else:
+            _arch = arch_type
         hidden_dim = trial.suggest_categorical("hidden_dim", [16, 32, 64])
         num_layers = trial.suggest_int("num_layers", 1, 3)
         dropout = trial.suggest_float("dropout", 0.1, 0.5, step=0.1)
@@ -90,10 +96,11 @@ def run_optuna_tuning(train_loader, val_loader, num_exo, betas, intercept, n_tri
         weight_decay = trial.suggest_float("weight_decay", 1e-6, 1e-3, log=True)
         
         model = NeuralHAR(num_har_features=3, num_exo_features=num_exo, hidden_dim=hidden_dim, 
-                          dropout=dropout, num_layers=num_layers, arch_type=arch_type)
+                          dropout=dropout, num_layers=num_layers, arch_type=_arch)
         model.init_har_weights(beta_weights=betas.reshape(1, -1), intercept=intercept)
         
         optimizer = optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
+        scheduler = CosineAnnealingLR(optimizer, T_max=30, eta_min=1e-6)
         
         best_val = np.inf
         patience = 5
@@ -107,6 +114,7 @@ def run_optuna_tuning(train_loader, val_loader, num_exo, betas, intercept, n_tri
                 loss.backward()
                 nn.utils.clip_grad_norm_(model.parameters(), 1.0)
                 optimizer.step()
+            scheduler.step()
                 
             model.eval()
             val_loss = 0.0
@@ -129,17 +137,83 @@ def run_optuna_tuning(train_loader, val_loader, num_exo, betas, intercept, n_tri
     study.optimize(objective, n_trials=n_trials)
     
     best_params = study.best_params
-    logger.info(f"  Best params found: {best_params} (Val QLIKE: {study.best_value:.4f})")
-    return best_params
+    if arch_type is not None:
+        best_params["arch_type"] = arch_type
+    logger.info(f"  Best params ({arch_label}): {best_params} (Val QLIKE: {study.best_value:.4f})")
+    return best_params, study.best_value
+
+
+def _train_single_arch(model, optimizer, df, exo_cols, scaler, n_train, n_val, step_size, betas):
+    """Walk-forward training and prediction for a single architecture."""
+    n = len(df)
+    
+    # Pre-train on Train+Val with cosine annealing
+    init_df = df.iloc[:n_train + n_val]
+    init_exo = scaler.transform(init_df[exo_cols].values.astype(np.float32)) if exo_cols != ["zero"] else np.zeros((len(init_df), 1), dtype=np.float32)
+    init_loader = DataLoader(_to_tensor(init_df, init_exo), batch_size=64, shuffle=False)
+    scheduler = CosineAnnealingLR(optimizer, T_max=50, eta_min=1e-6)
+    
+    for epoch in range(50):
+        model.train()
+        for bx_har, bx_exo, by in init_loader:
+            optimizer.zero_grad()
+            loss = qlike_loss(model(bx_har, bx_exo), by)
+            loss.backward()
+            nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+            optimizer.step()
+        scheduler.step()
+    
+    # Walk-Forward
+    test_start = n_train + n_val
+    preds_list, acts_list = [], []
+    
+    while test_start < n:
+        test_end = min(test_start + step_size, n)
+        
+        model.eval()
+        oos_df = df.iloc[test_start:test_end]
+        oos_exo = scaler.transform(oos_df[exo_cols].values.astype(np.float32)) if exo_cols != ["zero"] else np.zeros((len(oos_df), 1), dtype=np.float32)
+        oos_ds = _to_tensor(oos_df, oos_exo)
+        oos_loader = DataLoader(oos_ds, batch_size=max(len(oos_df), 1), shuffle=False)
+        
+        with torch.no_grad():
+            for bx_har, bx_exo, by in oos_loader:
+                preds = model(bx_har, bx_exo).squeeze().numpy()
+                acts = by.squeeze().numpy()
+                if preds.ndim == 0:
+                    preds = np.array([preds])
+                    acts = np.array([acts])
+                preds_list.append(preds)
+                acts_list.append(acts)
+        
+        # Expanding Window Finetune
+        if test_end < n:
+            expand_df = df.iloc[:test_end]
+            expand_exo = scaler.transform(expand_df[exo_cols].values.astype(np.float32)) if exo_cols != ["zero"] else np.zeros((len(expand_df), 1), dtype=np.float32)
+            expand_loader = DataLoader(_to_tensor(expand_df, expand_exo), batch_size=64, shuffle=False)
+            
+            model.train()
+            for epoch in range(5):
+                for bx_har, bx_exo, by in expand_loader:
+                    optimizer.zero_grad()
+                    loss = qlike_loss(model(bx_har, bx_exo), by)
+                    loss.backward()
+                    nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+                    optimizer.step()
+        
+        test_start = test_end
+    
+    return np.concatenate(preds_list), np.concatenate(acts_list)
 
 
 def train_asset(asset: str,
                 train_frac: float = 0.80,
                 val_frac: float = 0.10,
-                n_trials: int = 15,
-                step_size: int = 21):
+                n_trials: int = 40,
+                step_size: int = 21,
+                **kwargs):
     """
-    Full training pipeline with HPO and Walk-Forward Expanding Window.
+    Full training pipeline: HPO per architecture, walk-forward, ensemble.
     """
     logger.info(f"\n{'='*65}")
     logger.info(f"  Neural-HAR | Asset: {asset.upper()} | Expanding Window: {step_size} days")
@@ -189,81 +263,51 @@ def train_asset(asset: str,
 
     betas, intercept = _get_har_ols_init(train_df, HAR_COLS)
 
-    # 1. Hyperparameter Tuning
-    best_p = run_optuna_tuning(train_loader, val_loader, num_exo, betas, intercept, n_trials=n_trials)
+    # 1. Hyperparameter Tuning — separate HPO per architecture
+    trials_per_arch = max(n_trials // 2, 10)
     
-    # 2. Walk-Forward Expanding Window Evaluation
-    logger.info("  Starting Walk-Forward Expanding Window Evaluation...")
+    grn_params, grn_val = run_optuna_tuning(
+        train_loader, val_loader, num_exo, betas, intercept, 
+        n_trials=trials_per_arch, arch_type="grn"
+    )
+    tf_params, tf_val = run_optuna_tuning(
+        train_loader, val_loader, num_exo, betas, intercept,
+        n_trials=trials_per_arch, arch_type="transformer"
+    )
     
-    # Instantiate best model
-    model = NeuralHAR(num_har_features=3, num_exo_features=num_exo, 
-                      hidden_dim=best_p["hidden_dim"], dropout=best_p["dropout"], 
-                      num_layers=best_p["num_layers"], arch_type=best_p["arch_type"])
-    model.init_har_weights(beta_weights=betas.reshape(1, -1), intercept=intercept)
-    optimizer = optim.Adam(model.parameters(), lr=best_p["lr"], weight_decay=best_p["weight_decay"])
+    logger.info(f"  GRN val QLIKE: {grn_val:.4f} | Transformer val QLIKE: {tf_val:.4f}")
     
-    # Initial Pre-train on Train+Val
-    logger.info("  Pre-training on initial in-sample window (Train + Val)...")
-    init_df = df.iloc[:n_train + n_val]
-    init_exo = scaler.transform(init_df[exo_cols].values.astype(np.float32)) if exo_cols != ["zero"] else np.zeros((len(init_df), 1), dtype=np.float32)
-    init_loader = DataLoader(_to_tensor(init_df, init_exo), batch_size=64, shuffle=False)
+    # 2. Walk-Forward for BOTH architectures (for ensemble)
+    logger.info("  Walk-Forward: training GRN branch...")
+    model_grn = NeuralHAR(num_har_features=3, num_exo_features=num_exo,
+                          hidden_dim=grn_params["hidden_dim"], dropout=grn_params["dropout"],
+                          num_layers=grn_params["num_layers"], arch_type="grn")
+    model_grn.init_har_weights(beta_weights=betas.reshape(1, -1), intercept=intercept)
+    opt_grn = optim.Adam(model_grn.parameters(), lr=grn_params["lr"], weight_decay=grn_params["weight_decay"])
+    preds_grn, acts_arr = _train_single_arch(model_grn, opt_grn, df, exo_cols, scaler, n_train, n_val, step_size, betas)
     
-    for epoch in range(50):
-        model.train()
-        for bx_har, bx_exo, by in init_loader:
-            optimizer.zero_grad()
-            loss = qlike_loss(model(bx_har, bx_exo), by)
-            loss.backward()
-            nn.utils.clip_grad_norm_(model.parameters(), 1.0)
-            optimizer.step()
-            
-    # Walk-Forward
-    test_start = n_train + n_val
-    preds_list = []
-    acts_list = []
+    logger.info("  Walk-Forward: training Transformer branch...")
+    model_tf = NeuralHAR(num_har_features=3, num_exo_features=num_exo,
+                         hidden_dim=tf_params["hidden_dim"], dropout=tf_params["dropout"],
+                         num_layers=tf_params["num_layers"], arch_type="transformer")
+    model_tf.init_har_weights(beta_weights=betas.reshape(1, -1), intercept=intercept)
+    opt_tf = optim.Adam(model_tf.parameters(), lr=tf_params["lr"], weight_decay=tf_params["weight_decay"])
+    preds_tf, _ = _train_single_arch(model_tf, opt_tf, df, exo_cols, scaler, n_train, n_val, step_size, betas)
     
-    while test_start < n:
-        test_end = min(test_start + step_size, n)
-        
-        # OOS Predict
-        model.eval()
-        oos_df = df.iloc[test_start:test_end]
-        oos_exo = scaler.transform(oos_df[exo_cols].values.astype(np.float32)) if exo_cols != ["zero"] else np.zeros((len(oos_df), 1), dtype=np.float32)
-        oos_ds = _to_tensor(oos_df, oos_exo)
-        oos_loader = DataLoader(oos_ds, batch_size=max(len(oos_df), 1), shuffle=False)
-        
-        with torch.no_grad():
-            for bx_har, bx_exo, by in oos_loader:
-                preds = model(bx_har, bx_exo).squeeze().numpy()
-                acts = by.squeeze().numpy()
-                if preds.ndim == 0:
-                    preds = np.array([preds])
-                    acts = np.array([acts])
-                preds_list.append(preds)
-                acts_list.append(acts)
-                
-        # Expanding Window Finetune
-        if test_end < n:
-            expand_df = df.iloc[:test_end]
-            expand_exo = scaler.transform(expand_df[exo_cols].values.astype(np.float32)) if exo_cols != ["zero"] else np.zeros((len(expand_df), 1), dtype=np.float32)
-            expand_loader = DataLoader(_to_tensor(expand_df, expand_exo), batch_size=64, shuffle=False)
-            
-            # Finetune for 5 epochs
-            model.train()
-            for epoch in range(5):
-                for bx_har, bx_exo, by in expand_loader:
-                    optimizer.zero_grad()
-                    loss = qlike_loss(model(bx_har, bx_exo), by)
-                    loss.backward()
-                    nn.utils.clip_grad_norm_(model.parameters(), 1.0)
-                    optimizer.step()
-                    
-        test_start = test_end
-        
-    preds_arr = np.concatenate(preds_list)
-    acts_arr  = np.concatenate(acts_list)
+    # 3. Ensemble: weighted average (inverse-val-loss weighting)
+    w_grn = (1.0 / grn_val) / (1.0 / grn_val + 1.0 / tf_val)
+    w_tf  = (1.0 / tf_val)  / (1.0 / grn_val + 1.0 / tf_val)
+    preds_arr = w_grn * preds_grn + w_tf * preds_tf
+    logger.info(f"  Ensemble weights: GRN={w_grn:.3f}, Transformer={w_tf:.3f}")
+    
+    # Individual metrics for logging
+    for label, p in [("GRN", preds_grn), ("Transformer", preds_tf), ("Ensemble", preds_arr)]:
+        av = np.exp(np.clip(acts_arr, -15, 15))
+        pv = np.exp(np.clip(p, -15, 15))
+        q = float(np.mean(av / pv - np.log(av / pv) - 1))
+        logger.info(f"    {label:12s} OOS QLIKE: {q:.4f}")
 
-    # Metrics
+    # Final metrics (ensemble)
     av = np.exp(np.clip(acts_arr,  -15, 15))
     pv = np.exp(np.clip(preds_arr, -15, 15))
     qlike_oos = float(np.mean(av / pv - np.log(av / pv) - 1))
@@ -281,11 +325,13 @@ def train_asset(asset: str,
     np.save(fc_path,  preds_arr)
     np.save(act_path, acts_arr)
     
-    model_path = os.path.join(MODEL_DIR, f"neural_har_{asset}.pth")
-    torch.save(model.state_dict(), model_path)
+    model_path_grn = os.path.join(MODEL_DIR, f"neural_har_grn_{asset}.pth")
+    model_path_tf  = os.path.join(MODEL_DIR, f"neural_har_tf_{asset}.pth")
+    torch.save(model_grn.state_dict(), model_path_grn)
+    torch.save(model_tf.state_dict(), model_path_tf)
     
     logger.info(f"  Saved forecasts -> {fc_path}")
-    logger.info(f"  Saved model     -> {model_path}")
+    logger.info(f"  Saved models    -> {model_path_grn}, {model_path_tf}")
 
     return preds_arr, acts_arr
 
@@ -295,7 +341,7 @@ def main():
     parser.add_argument("--asset", type=str, default=None,
                         choices=["btc", "spx", "nifty"],
                         help="Asset to train on. Omit for all assets.")
-    parser.add_argument("--n_trials", type=int, default=15)
+    parser.add_argument("--n_trials", type=int, default=40)
     parser.add_argument("--step_size", type=int, default=21)
     args = parser.parse_args()
 
