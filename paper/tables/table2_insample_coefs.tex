@@ -1,0 +1,58 @@
+\begin{table}[htbp]
+\centering
+\caption{In-Sample HAC-OLS Coefficients: HAR and HAR-S}
+\label{tab:insample}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lllrrlrr}
+\toprule
+Asset & Model & Variable & Coef & p-value & Sig & R\$\textasciicircum \{2\}\$ & N \\
+\midrule
+BTC & HAR & const & -1.135600 & 0.000000 & *** & 0.403700 & 2744 \\
+BTC & HAR & RV\_d & 0.171400 & 0.000000 & *** & 0.403700 & 2744 \\
+BTC & HAR & RV\_w & 0.375200 & 0.000000 & *** & 0.403700 & 2744 \\
+BTC & HAR & RV\_m & 0.300100 & 0.000000 & *** & 0.403700 & 2744 \\
+BTC & HAR-S & const & -1.010300 & 0.124000 & NaN & 0.187300 & 1095 \\
+BTC & HAR-S & RV\_d & 0.217500 & 0.000000 & *** & 0.187300 & 1095 \\
+BTC & HAR-S & RV\_w & 0.223200 & 0.006000 & *** & 0.187300 & 1095 \\
+BTC & HAR-S & RV\_m & 0.538900 & 0.000000 & *** & 0.187300 & 1095 \\
+BTC & HAR-S & vpin\_lag1 & -0.794400 & 0.116000 & NaN & 0.187300 & 1095 \\
+BTC & HAR-S & obi\_sq\_lag1 & 2.769200 & 0.000000 & *** & 0.187300 & 1095 \\
+BTC & HAR-S & illiq\_lag1 & 0.000000 & 0.095000 & * & 0.187300 & 1095 \\
+BTC & HAR-S & FinBERT\_score\_lag1 & 0.000000 & 0.252000 & NaN & 0.187300 & 1095 \\
+BTC & HAR-S & sent\_surprise\_lag1 & 0.000000 & 0.000000 & *** & 0.187300 & 1095 \\
+BTC & HAR-S & credit\_spread\_lag1 & -0.050000 & 0.606000 & NaN & 0.187300 & 1095 \\
+BTC & HAR-S & term\_slope\_lag1 & 0.046200 & 0.645000 & NaN & 0.187300 & 1095 \\
+BTC & HAR-S & crypto\_fg\_lag1 & 0.020400 & 0.907000 & NaN & 0.187300 & 1095 \\
+SPX & HAR & const & -3.360000 & 0.000000 & *** & 0.088500 & 2862 \\
+SPX & HAR & RV\_d & -0.004100 & 0.845000 & NaN & 0.088500 & 2862 \\
+SPX & HAR & RV\_w & 0.248600 & 0.000000 & *** & 0.088500 & 2862 \\
+SPX & HAR & RV\_m & 0.451800 & 0.000000 & *** & 0.088500 & 2862 \\
+SPX & HAR-S & const & -9.928200 & 0.000000 & *** & 0.033900 & 755 \\
+SPX & HAR-S & RV\_d & -0.038700 & 0.236000 & NaN & 0.033900 & 755 \\
+SPX & HAR-S & RV\_w & -0.062100 & 0.549000 & NaN & 0.033900 & 755 \\
+SPX & HAR-S & RV\_m & 0.399900 & 0.020000 & ** & 0.033900 & 755 \\
+SPX & HAR-S & illiq\_lag1 & -0.000000 & 0.637000 & NaN & 0.033900 & 755 \\
+SPX & HAR-S & FinBERT\_score\_lag1 & -0.235200 & 0.802000 & NaN & 0.033900 & 755 \\
+SPX & HAR-S & sent\_surprise\_lag1 & -1.084200 & 0.222000 & NaN & 0.033900 & 755 \\
+SPX & HAR-S & credit\_spread\_lag1 & 0.628500 & 0.028000 & ** & 0.033900 & 755 \\
+SPX & HAR-S & term\_slope\_lag1 & 0.525000 & 0.071000 & * & 0.033900 & 755 \\
+NIFTY50 & HAR & const & -4.602000 & 0.000000 & *** & 0.039900 & 2755 \\
+NIFTY50 & HAR & RV\_d & -0.016400 & 0.429000 & NaN & 0.039900 & 2755 \\
+NIFTY50 & HAR & RV\_w & 0.115200 & 0.034000 & ** & 0.039900 & 2755 \\
+NIFTY50 & HAR & RV\_m & 0.482300 & 0.000000 & *** & 0.039900 & 2755 \\
+NIFTY50 & HAR-S & const & -10.082400 & 0.000000 & *** & 0.030500 & 719 \\
+NIFTY50 & HAR-S & RV\_d & -0.006600 & 0.874000 & NaN & 0.030500 & 719 \\
+NIFTY50 & HAR-S & RV\_w & 0.138000 & 0.172000 & NaN & 0.030500 & 719 \\
+NIFTY50 & HAR-S & RV\_m & 0.160700 & 0.354000 & NaN & 0.030500 & 719 \\
+NIFTY50 & HAR-S & illiq\_lag1 & 0.000000 & 0.978000 & NaN & 0.030500 & 719 \\
+NIFTY50 & HAR-S & FinBERT\_score\_lag1 & -0.222700 & 0.803000 & NaN & 0.030500 & 719 \\
+NIFTY50 & HAR-S & sent\_surprise\_lag1 & -0.376300 & 0.670000 & NaN & 0.030500 & 719 \\
+NIFTY50 & HAR-S & credit\_spread\_lag1 & 0.621900 & 0.022000 & ** & 0.030500 & 719 \\
+NIFTY50 & HAR-S & term\_slope\_lag1 & 0.717400 & 0.009000 & *** & 0.030500 & 719 \\
+\bottomrule
+\end{tabular}
+}
+\begin{tablenotes}\footnotesize
+  \item Significance: $^{*}p<0.10$, $^{**}p<0.05$, $^{***}p<0.01$. HAC standard errors.
+\end{tablenotes}
+\end{table}

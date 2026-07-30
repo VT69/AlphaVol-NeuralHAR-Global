@@ -1,0 +1,9 @@
+\section{Economic Significance}
+\label{sec:economic}
+We translate our statistical forecasting accuracy into economic utility via a volatility-targeting strategy. The portfolio scales its leverage inversely to the 1-day ahead volatility forecast to target a constant risk budget (2\% daily volatility), constrained by a maximum leverage of 5x. We assume a Quarter-Kelly position sizing framework and realistic transaction costs of 5 basis points (bps) per trade.
+
+Table \ref{tab:backtest} reports the out-of-sample backtest metrics. While Neural-HAR provides statistically superior volatility forecasts (particularly for SPX), this does \textit{not} translate to a higher Sharpe ratio than the baseline HAR model. The sentiment-aware Neural-HAR model exhibits significantly higher turnover (e.g., 0.365 for SPX compared to 0.093 for HAR) as it aggressively reacts to non-linear signals. Net of the 5 bps slippage, this turnover erosion degrades the risk-adjusted return.
+
+However, from a pure risk-management perspective, the Neural-HAR model is economically valuable. By providing more accurate volatility forecasts, the Neural-HAR strategy produces lower realized annualized volatility (closer to the target mandate) and smaller maximum drawdowns for both BTC ($-59.5\%$ vs HAR's $-65.4\%$) and SPX ($-35.2\%$ vs HAR's $-42.3\%$). Thus, Neural-HAR offers better risk control, albeit at the cost of total return due to implementation friction.
+
+\input{tables/table6_backtest.tex}

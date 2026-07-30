@@ -1,0 +1,22 @@
+\begin{table}[htbp]
+\centering
+\caption{Model Confidence Set: All Three Models ($\alpha=0.10$, QLIKE Loss, End-Aligned Trailing Window)}
+\label{tab:mcs_full}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{rllrrrrr}
+\toprule
+Unnamed: 0 & Asset & model & mean\textbackslash \_loss & MCS\textbackslash \_pvalue & in\textbackslash \_MCS & rank & eliminated\textbackslash \_at \\
+\midrule
+0 & BTC & Neural-HAR & 0.286585 & 1.000000 & True & 1 & NaN \\
+1 & BTC & HAR & 0.318403 & 1.000000 & True & 2 & NaN \\
+2 & BTC & HAR-S & 0.347834 & 1.000000 & True & 3 & NaN \\
+0 & SPX & Neural-HAR & 1.566914 & 1.000000 & True & 1 & NaN \\
+1 & SPX & HAR-S & 3.657654 & 0.000000 & False & 2 & 2.000000 \\
+2 & SPX & HAR & 3.896581 & 0.000000 & False & 3 & 1.000000 \\
+0 & NIFTY & Neural-HAR & 1.869842 & 1.000000 & True & 1 & NaN \\
+1 & NIFTY & HAR & 2.330459 & 0.026000 & False & 2 & 2.000000 \\
+2 & NIFTY & HAR-S & 3.321181 & 0.009000 & False & 3 & 1.000000 \\
+\bottomrule
+\end{tabular}
+}
+\end{table}

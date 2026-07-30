@@ -1,0 +1,7 @@
+\section{Regime-Conditional Analysis}
+\label{sec:regime}
+To investigate whether the marginal predictive content of sentiment is state-dependent, we filter the data into low, medium, and high volatility regimes using a Hidden Markov Model. 
+
+Table \ref{tab:regime_coefs} presents the regime-conditional in-sample coefficients for the HAR-S model. Contrary to the hypothesis that sentiment is most impactful during specific market stress periods, the FinBERT sentiment coefficients are statistically insignificant across all regimes for both SPX ($p \approx 0.17 - 0.55$) and NIFTY ($p \approx 0.58 - 0.93$). Furthermore, for BTC, the order-book imbalance (OBI) metric exhibits strong significance in the low and medium regimes ($p < 0.01$), but loses statistical significance in the high-stress regime ($p=0.12$). Regime-conditional OOS forecast accuracy is provided in Table~\ref{tab:regime_oos}. Ultimately, we do not find robust evidence that NLP-derived sentiment's marginal predictive content is strictly regime-dependent.
+
+\input{tables/table4_regime_coefficients.tex}

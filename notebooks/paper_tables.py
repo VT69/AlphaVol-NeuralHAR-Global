@@ -267,8 +267,8 @@ def table4_dm_tests(assets: list) -> pd.DataFrame:
 
         # Align lengths
         min_n = min(len(act), *(len(v) for v in fc_dict.values()))
-        act   = act[:min_n]
-        fc_dict = {k: v[:min_n] for k, v in fc_dict.items()}
+        act   = act[-min_n:]
+        fc_dict = {k: v[-min_n:] for k, v in fc_dict.items()}
 
         try:
             dm_df = run_full_comparison(act, fc_dict, benchmark_key="HAR",
@@ -306,8 +306,8 @@ def table5_mcs(assets: list, alpha: float = 0.10, B: int = 1000) -> pd.DataFrame
 
     def _qlike_losses(act, fc):
         n  = min(len(act), len(fc))
-        av = np.exp(np.clip(act[:n], -15, 15))
-        pv = np.exp(np.clip(fc[:n],  -15, 15))
+        av = np.exp(np.clip(act[-n:], -15, 15))
+        pv = np.exp(np.clip(fc[-n:],  -15, 15))
         return av / pv - np.log(av / pv) - 1
 
     all_rows = []
@@ -320,7 +320,7 @@ def table5_mcs(assets: list, alpha: float = 0.10, B: int = 1000) -> pd.DataFrame
             continue
 
         min_n  = min(len(act), *(len(v) for v in fc_dict.values()))
-        L_df   = pd.DataFrame({k: _qlike_losses(act, v)[:min_n]
+        L_df   = pd.DataFrame({k: _qlike_losses(act, v)[-min_n:]
                                  for k, v in fc_dict.items()})
         try:
             mcs_df = mcs_test(L_df, alpha=alpha, B=B, block_size=5, stat="TR")

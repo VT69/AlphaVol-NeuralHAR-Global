@@ -1,0 +1,19 @@
+\begin{table}[htbp]
+\centering
+\caption{Model Confidence Set: Neural-HAR vs.\ HAR ($\alpha=0.10$, QLIKE Loss, Trailing Window $N\approx275$--$287$)}
+\label{tab:mcs}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{llrrrrr}
+\toprule
+Asset & model & mean\textbackslash \_loss & MCS\textbackslash \_pvalue & in\textbackslash \_MCS & rank & eliminated\textbackslash \_at \\
+\midrule
+BTC & Neural-HAR & 0.641505 & 1.000000 & True & 1 & NaN \\
+BTC & HAR & 0.713312 & 1.000000 & True & 2 & NaN \\
+SPX & Neural-HAR & 1.773951 & 1.000000 & True & 1 & NaN \\
+SPX & HAR & 5.407347 & 0.000000 & False & 2 & 1.000000 \\
+NIFTY50 & Neural-HAR & 1.803965 & 1.000000 & True & 1 & NaN \\
+NIFTY50 & HAR & 2.137405 & 1.000000 & True & 2 & NaN \\
+\bottomrule
+\end{tabular}
+}
+\end{table}

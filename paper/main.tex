@@ -1,0 +1,58 @@
+\documentclass[3p,times]{elsarticle}
+
+%% --- Packages ---
+\usepackage{booktabs}
+\usepackage{threeparttable}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{siunitx}
+\usepackage{caption}
+\usepackage[numbers]{natbib}
+\usepackage{lineno}
+%% hyperref MUST be loaded last
+\usepackage{hyperref}
+
+\journal{Journal of Empirical Finance}
+
+\begin{document}
+
+\begin{frontmatter}
+
+\title{Forecasting Realized Volatility in Markets: Does Sentiment Add
+       Information Beyond the HAR Framework?}
+
+\author[vit]{Vaibhav Tiwari}
+\author[vit]{Harshit Gupta}
+\address[vit]{Department of Computer Science and Engineering (AI \& ML),
+              VIT Bhopal University, Bhopal, India}
+\ead{vaibhav.23bai10108@vitbhopal.ac.in}
+
+\input{sections/00_abstract.tex}
+
+\begin{keyword}
+Realized volatility \sep HAR model \sep sentiment analysis \sep FinBERT \sep
+model confidence set \sep volatility forecasting \sep cryptocurrency
+\JEL C22 \sep C53 \sep C58 \sep G12 \sep G17
+\end{keyword}
+
+\end{frontmatter}
+
+\linenumbers
+
+\input{sections/01_introduction.tex}
+\input{sections/02_literature.tex}
+\input{sections/03_data.tex}
+\input{sections/04_methodology.tex}
+\input{sections/05_results.tex}
+\input{sections/06_regime_analysis.tex}
+\input{sections/07_economic_significance.tex}
+\input{sections/08_robustness_limitations.tex}
+\input{sections/09_conclusion.tex}
+
+\bibliographystyle{elsarticle-num}
+\bibliography{references}
+
+\appendix
+\input{appendix.tex}
+
+\end{document}

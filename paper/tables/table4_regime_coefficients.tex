@@ -1,0 +1,34 @@
+\begin{table}[htbp]
+\centering
+\caption{Regime-Conditional HAC-OLS Coefficients: HAR and HAR-S}
+\label{tab:regime_coefs}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lllrrrrrrrrrrrrrr}
+\toprule
+Asset & regime & model & alpha & beta\textbackslash \_d & beta\textbackslash \_w & beta\textbackslash \_m & R2\textbackslash \_insample & N & beta\textbackslash \_FinBERT\textbackslash \_score\textbackslash \_lag1 & p\textbackslash \_FinBERT\textbackslash \_score\textbackslash \_lag1 & beta\textbackslash \_sent\textbackslash \_surprise\textbackslash \_lag1 & p\textbackslash \_sent\textbackslash \_surprise\textbackslash \_lag1 & beta\textbackslash \_vpin\textbackslash \_lag1 & p\textbackslash \_vpin\textbackslash \_lag1 & beta\textbackslash \_obi\textbackslash \_sq\textbackslash \_lag1 & p\textbackslash \_obi\textbackslash \_sq\textbackslash \_lag1 \\
+\midrule
+BTC & low & HAR & -2.195900 & 0.080100 & 0.260700 & 0.381900 & 0.168300 & 447 & NaN & NaN & NaN & NaN & NaN & NaN & NaN & NaN \\
+BTC & low & HAR-S & -1.660100 & 0.271100 & 0.277200 & 0.457600 & 0.204100 & 378 & 0.000000 & NaN & 0.000000 & NaN & -0.699700 & 0.436300 & 3.290400 & 0.001800 \\
+BTC & medium & HAR & -3.550900 & 0.083300 & 0.230100 & 0.225300 & 0.094200 & 364 & NaN & NaN & NaN & NaN & NaN & NaN & NaN & NaN \\
+BTC & medium & HAR-S & -1.623900 & 0.221200 & 0.197600 & 0.303500 & 0.145900 & 364 & 0.000000 & NaN & 0.000000 & NaN & -1.031200 & 0.216700 & 3.010800 & 0.000900 \\
+BTC & high & HAR & -1.093900 & 0.203100 & 0.392500 & 0.252600 & 0.435000 & 1933 & NaN & NaN & NaN & NaN & NaN & NaN & NaN & NaN \\
+BTC & high & HAR-S & -0.278100 & 0.114600 & -0.063000 & 0.852800 & 0.227400 & 358 & 0.000000 & NaN & 0.000000 & NaN & -1.208200 & 0.133300 & 1.765200 & 0.117700 \\
+SPX & low & HAR & -7.762400 & 0.004800 & -0.136900 & 0.459500 & 0.006400 & 306 & NaN & NaN & NaN & NaN & NaN & NaN & NaN & NaN \\
+SPX & low & HAR-S & -10.011100 & 0.050300 & -0.334800 & 0.707000 & 0.049600 & 260 & 0.802600 & 0.550000 & -1.985400 & 0.100600 & NaN & NaN & NaN & NaN \\
+SPX & medium & HAR & -8.351400 & -0.103500 & 0.205200 & 0.125600 & 0.014700 & 245 & NaN & NaN & NaN & NaN & NaN & NaN & NaN & NaN \\
+SPX & medium & HAR-S & -16.961200 & -0.102600 & 0.194500 & -0.288100 & 0.035600 & 245 & -1.043800 & 0.441600 & 0.572100 & 0.567300 & NaN & NaN & NaN & NaN \\
+SPX & high & HAR & -3.037100 & 0.005200 & 0.305700 & 0.413800 & 0.114600 & 2311 & NaN & NaN & NaN & NaN & NaN & NaN & NaN & NaN \\
+SPX & high & HAR-S & -11.334900 & -0.107500 & -0.094200 & 0.394900 & 0.068900 & 250 & -3.336800 & 0.174700 & -0.175800 & 0.928800 & NaN & NaN & NaN & NaN \\
+NIFTY & low & HAR & -7.991200 & -0.069100 & 0.173800 & 0.186600 & 0.013700 & 295 & NaN & NaN & NaN & NaN & NaN & NaN & NaN & NaN \\
+NIFTY & low & HAR-S & -8.724600 & -0.050200 & 0.185300 & 0.183200 & 0.020700 & 248 & 0.648200 & 0.583300 & -0.445300 & 0.720000 & NaN & NaN & NaN & NaN \\
+NIFTY & medium & HAR & -6.181600 & -0.041900 & 0.271200 & 0.223000 & 0.032800 & 232 & NaN & NaN & NaN & NaN & NaN & NaN & NaN & NaN \\
+NIFTY & medium & HAR-S & -8.654000 & -0.051100 & 0.264400 & 0.125000 & 0.056600 & 232 & -1.202500 & 0.612300 & -0.665700 & 0.693100 & NaN & NaN & NaN & NaN \\
+NIFTY & high & HAR & -4.287200 & -0.007500 & 0.082900 & 0.531800 & 0.042300 & 2228 & NaN & NaN & NaN & NaN & NaN & NaN & NaN & NaN \\
+NIFTY & high & HAR-S & -14.873800 & 0.082500 & -0.129000 & -0.109500 & 0.068400 & 239 & 0.210700 & 0.926700 & -1.291900 & 0.562200 & NaN & NaN & NaN & NaN \\
+\bottomrule
+\end{tabular}
+}
+\begin{tablenotes}\footnotesize
+  \item Significance: $^{*}p<0.10$, $^{**}p<0.05$, $^{***}p<0.01$. HAC standard errors.
+\end{tablenotes}
+\end{table}

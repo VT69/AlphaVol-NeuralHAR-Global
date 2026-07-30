@@ -1,0 +1,9 @@
+\section{Data}
+\label{sec:data}
+We analyze three structurally distinct assets: Bitcoin (BTC), the S\&P 500 index (SPX), and the NIFTY 50 index (NIFTY). Table \ref{tab:desc_stats} presents the descriptive statistics for the daily log realized volatility of each asset. The data spans from January 23, 2019, to July 28, 2026, for BTC ($N=2,744$), and from February 5, 2015, to July 28, 2026, for SPX ($N=2,862$) and NIFTY ($N=2,755$). For BTC, realized variance is computed using 5-minute intraday prices; for the equity indices, a realized volatility proxy is constructed from daily OHLCV data.
+
+\input{tables/table1_descriptive_stats.tex}
+
+The time series of realized volatility for all three assets visually exhibits the stylized facts of financial volatility, including volatility clustering and a pronounced, synchronous spike during the onset of the COVID-19 pandemic in early 2020. 
+
+In addition to realized volatility, our feature matrix includes a suite of exogenous variables. Market microstructure is captured via Volume-Synchronized Probability of Informed Trading (VPIN), Order Book Imbalance (OBI), and Amihud Illiquidity. Macroeconomic controls include the term slope and credit spread. Finally, sentiment is measured via a daily aggregate FinBERT score derived from news headlines, a calculated sentiment surprise metric, and retail fear/greed indices.

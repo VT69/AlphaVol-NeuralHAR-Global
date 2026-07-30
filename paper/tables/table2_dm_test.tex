@@ -1,0 +1,22 @@
+\begin{table}[htbp]
+\centering
+\caption{Diebold--Mariano Test (HLN Correction): Challenger vs.\ HAR Benchmark (End-Aligned Trailing Window, $N\approx275$--$287$)}
+\label{tab:dm_tests}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{llrrllrrllr}
+\toprule
+Model & Asset & QLIKE\textbackslash \_DM & QLIKE\textbackslash \_p & QLIKE\textbackslash \_sig & QLIKE\textbackslash \_better & MSE\textbackslash \_DM & MSE\textbackslash \_p & MSE\textbackslash \_sig & MSE\textbackslash \_better & OOS\textbackslash \_R2 \\
+\midrule
+HAR-S & BTC & -1.690300 & 0.091000 & * & A & 1.514900 & 0.129800 & NaN & B & 0.046400 \\
+Neural-HAR & BTC & 1.980000 & 0.047700 & ** & B & -3.283300 & 0.001000 & *** & A & -0.152100 \\
+HAR-S & SPX & 0.704100 & 0.481300 & NaN & B & 0.082100 & 0.934600 & NaN & B & 0.002200 \\
+Neural-HAR & SPX & 5.053000 & 0.000000 & *** & B & -3.630500 & 0.000300 & *** & A & -0.163800 \\
+HAR-S & NIFTY & -3.551500 & 0.000400 & *** & A & -2.210700 & 0.027100 & ** & A & -0.049900 \\
+Neural-HAR & NIFTY & 2.435800 & 0.014900 & ** & B & -3.077700 & 0.002100 & *** & A & -0.123500 \\
+\bottomrule
+\end{tabular}
+}
+\begin{tablenotes}\footnotesize
+  \item Positive DM statistic favours the challenger model. `Better' column: A\,=\,HAR preferred, B\,=\,Challenger preferred. All arrays aligned to the chronological end of the shorter series. $^{*}p<0.10$, $^{**}p<0.05$, $^{***}p<0.01$.
+\end{tablenotes}
+\end{table}

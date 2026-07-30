@@ -1,0 +1,31 @@
+\section{Methodology}
+\label{sec:methodology}
+
+\subsection{HAR and HAR-S Models}
+The standard HAR model predicts the log realized volatility using daily, weekly, and monthly (22-day) lags:
+\begin{equation}
+\log(RV_t) = \alpha + \beta_d \log(RV_{t-1}) + \beta_w \log(RV_{t-5:t-1}) + \beta_m \log(RV_{t-22:t-1}) + \varepsilon_t
+\end{equation}
+The Sentiment-Augmented HAR (HAR-S) linearly extends this by including the lagged exogenous feature vector $X_{t-1}$, which contains FinBERT sentiment, term slope, credit spread, and microstructure variables:
+\begin{equation}
+\log(RV_t) = \alpha + \beta_d \log(RV_{t-1}) + \beta_w \log(RV_{t-5:t-1}) + \beta_m \log(RV_{t-22:t-1}) + \gamma^\top X_{t-1} + \varepsilon_t
+\end{equation}
+These models are estimated via Ordinary Least Squares (OLS) utilizing Heteroskedasticity and Autocorrelation Consistent (HAC) standard errors.
+
+\subsection{The Neural-HAR Architecture}
+The Neural-HAR model is a hybrid architecture designed to isolate non-linear interactions without sacrificing the robust autoregressive baseline of the HAR model. The model computes a linear OLS HAR prior. In parallel, a residual neural network takes both the HAR lags and the exogenous features $X_{t-1}$ as input to predict the residual error of the linear prior.
+
+The residual branch is an inverse-validation-loss weighted ensemble of two deep learning architectures:
+1. \textbf{Gated Residual Network (GRN):} Utilizes Gated Linear Units (GLU) to perform soft feature selection, dampening noisy sentiment variables while amplifying predictive signals.
+2. \textbf{FT-Transformer:} Tokenizes numerical features and employs multi-head self-attention to model complex, higher-order cross-feature interactions.
+
+\subsection{Validation and Evaluation Protocol}
+To strictly prevent look-ahead bias, we employ an expanding-window walk-forward validation scheme. The baseline HAR and HAR-S models are re-estimated using all available prior data. For the Neural-HAR model, the walk-forward routine utilizes a 21-day step size with an initial minimum training window of 252 days. At each step, Optuna optimizes the hyperparameters (learning rate, weight decay, dropout, network depth) over 40 trials.
+
+Forecasts are evaluated out-of-sample (OOS) using QLIKE, Mean Squared Error (MSE), and Mean Absolute Error (MAE). 
+\begin{equation}
+\text{QLIKE}(RV_t, \widehat{RV}_t) = \frac{RV_t}{\widehat{RV}_t} - \log\left(\frac{RV_t}{\widehat{RV}_t}\right) - 1
+\end{equation}
+We apply the Diebold-Mariano (DM) test with the Harvey-Leybourne-Newbold (HLN) small-sample correction, and the Model Confidence Set (MCS) using a block bootstrap ($B=1000$ resamples) at the $\alpha=0.10$ significance level.
+
+\textbf{Important Limitation on Sample Alignment:} Because the Neural-HAR model is computationally intensive and was evaluated over a shorter trailing period, the sample sizes for the out-of-sample evaluation differ. The baseline HAR expanding-window metrics in our preliminary descriptive statistics cover large samples ($N > 2400$). However, the direct DM and MCS comparisons involving the Neural-HAR model (and the corresponding HAR baseline for that specific evaluation) are strictly evaluated on the shortest common trailing window ($N=275$ for BTC, $N=287$ for SPX, $N=276$ for NIFTY), representing approximately one recent trading year that does \textit{not} include the COVID-19 pandemic shock. All relative statistical comparisons in the subsequent sections are computed on this harmonized short window.

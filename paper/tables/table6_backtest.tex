@@ -1,0 +1,22 @@
+\begin{table}[htbp]
+\centering
+\caption{Economic Significance: Volatility-Targeting Backtest (5\,bps Slippage, Quarter-Kelly, $\leq 5{\times}$ Leverage, $N\approx275$--$287$)}
+\label{tab:backtest}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{llrrrrrrrr}
+\toprule
+Asset & Model & Sharpe & Ann\textbackslash \_Return & Ann\textbackslash \_Vol & MaxDD & Calmar & HitRate & Turnover & N \\
+\midrule
+BTC & HAR & -1.994300 & -78.550000 & 39.390000 & -65.400000 & -1.201000 & 0.461800 & 0.073700 & 275.000000 \\
+BTC & HAR-S & -2.031200 & -85.140000 & 41.920000 & -71.080000 & -1.197800 & 0.461800 & 0.057500 & 275.000000 \\
+BTC & Neural-HAR & -2.095700 & -70.940000 & 33.850000 & -59.510000 & -1.192200 & 0.461800 & 0.052700 & 275.000000 \\
+SPX & HAR & 1.446200 & 83.370000 & 57.640000 & -42.260000 & 1.972700 & 0.564500 & 0.093500 & 287.000000 \\
+SPX & HAR-S & 1.161500 & 64.710000 & 55.720000 & -50.500000 & 1.281500 & 0.550500 & 0.579600 & 287.000000 \\
+SPX & Neural-HAR & 1.201100 & 48.770000 & 40.610000 & -35.240000 & 1.384100 & 0.554000 & 0.365500 & 287.000000 \\
+NIFTY & HAR & -0.310700 & -16.480000 & 53.050000 & -67.280000 & -0.245000 & 0.510900 & 0.050700 & 276.000000 \\
+NIFTY & HAR-S & -0.383100 & -22.570000 & 58.910000 & -77.110000 & -0.292700 & 0.510900 & 0.165200 & 276.000000 \\
+NIFTY & Neural-HAR & -0.572400 & -25.850000 & 45.160000 & -64.750000 & -0.399200 & 0.510900 & 0.484400 & 276.000000 \\
+\bottomrule
+\end{tabular}
+}
+\end{table}
