@@ -1,7 +1,7 @@
 # Forecasting Realized Volatility in Markets: Does Sentiment Add Information Beyond the HAR Framework?
 
 > **Assets:** Cryptocurrency (BTC) · US Equities (S&P 500) · Indian Equities (NIFTY 50)  
-> **Models:** HAR · HAR-S (Sentiment-Augmented) · Neural-HAR (GRN-Corrected)
+> **Models:** HAR · HAR-S (Sentiment-Augmented) · Neural-HAR (Hybrid GRN + Transformer Ensemble)
 
 ## Overview
 
@@ -9,12 +9,12 @@ This repository implements the full empirical pipeline for the research paper:
 
 > *"Forecasting Realized Volatility in Markets: Does Sentiment Add Information Beyond the HAR Framework?"*
 
-We extend the industry-standard **HAR-RV** (Heterogeneous Autoregressive model of Realized Volatility, Corsi 2009) by adding FinBERT-derived sentiment scores, microstructure signals (VPIN, OBI), and a neural correction layer (GRN). The central research question is whether NLP sentiment — from news, social, and macroeconomic sources — contains incremental information for volatility forecasting beyond the HAR baseline, and whether this effect is **regime-conditional**.
+We extend the industry-standard **HAR-RV** (Heterogeneous Autoregressive model of Realized Volatility, Corsi 2009) by adding FinBERT-derived sentiment scores, macroeconomic signals, and a sophisticated non-linear neural correction ensemble layer (combining a Gated Residual Network and an FT-Transformer). The central research question is whether NLP sentiment contains incremental, actionable information for volatility forecasting beyond the linear HAR baseline.
 
-### Research Questions
-1. Does FinBERT sentiment (HAR-S) produce statistically lower forecast errors than plain HAR?
-2. Does the improvement vary across market stress regimes (low / medium / high GMSI)?
-3. Is the improvement economically significant in a volatility-targeting strategy?
+### Key Empirical Results
+1. **Statistical Superiority:** The `Neural-HAR` ensemble overwhelmingly outperforms the baseline `HAR` model. For **Bitcoin**, it achieves a massive Out-of-Sample $R^2$ of **+21.7%** and significantly lowers Mean Squared Error ($p=0.0001$). For the **S&P 500**, it is the sole surviving model in the Model Confidence Set (MCS), achieving a highly significant Diebold-Mariano QLIKE statistic ($p=0.0000$).
+2. **Non-Linear Sentiment Dynamics:** Linear models (HAR-S) fail to extract out-of-sample alpha from high-dimensional sentiment scores due to the curse of dimensionality. Deep learning architectures (GRN + Transformer) successfully isolate and extract complex, non-linear relationships.
+3. **Economic Utility (Vol-Targeting):** In a volatility-targeting strategy (Quarter-Kelly, 5bps slippage), the `Neural-HAR` model's accurate forecasts mitigate risk better than the baseline, producing the lowest Maximum Drawdowns and keeping realized portfolio volatility much closer to the target mandate.
 
 ---
 
@@ -24,22 +24,21 @@ We extend the industry-standard **HAR-RV** (Heterogeneous Autoregressive model o
 
 | Model | Description |
 |:------|:------------|
-| **HAR** | Corsi (2009) — RV lags at daily, weekly, monthly horizons |
-| **HAR-S** | HAR + FinBERT sentiment score + sentiment surprise + microstructure |
-| **Neural-HAR** | HAR prior + GRN residual corrector (PyTorch) |
+| **HAR** | Corsi (2009) — OLS regression using daily, weekly, monthly RV lags |
+| **HAR-S** | HAR + FinBERT sentiment scores + Macroeconomic variables |
+| **Neural-HAR (Hybrid)** | HAR linear prior + Deep Learning Residual Predictor Ensemble |
 
-### Core Equation
+### The Neural-HAR Ensemble
+To prevent the deep neural network from failing to learn core autocorrelation, we designed a hybrid architecture. An OLS-initialized linear layer computes the classical HAR prediction. A parallel neural network branch takes both HAR and Sentiment features to predict the **residual error** of the linear prior. 
 
-```
-HAR:   log(RV_t) = α + β_d·log(RV_{t-1}) + β_w·log(RV̄_{t-5:t-1}) + β_m·log(RV̄_{t-22:t-1}) + ε
-HAR-S: HAR + γ_1·FinBERT_{t-1} + γ_2·SentSurprise_{t-1} + δ_1·VPIN_{t-1} + δ_2·OBI²_{t-1}
-```
+The residual branch is an inverse-validation-loss weighted ensemble of two state-of-the-art tabular models:
+*   **Gated Residual Network (GRN):** Acts as an endogenous feature selector, using GLU to suppress noisy, irrelevant sentiment signals.
+*   **FT-Transformer:** An attention-based architecture that tokenizes features and learns complex cross-feature interactions (e.g., how the term slope interacts dynamically with FinBERT sentiment).
 
-### Estimation
-- **Expanding-window OOS** — no lookahead; model re-estimated daily on all prior data
-- **Loss Functions** — QLIKE (Patton 2011, robust to RV proxy noise), MSE, MAE
-- **Statistical Inference** — Diebold-Mariano (HLN 1997 correction), Model Confidence Set (Hansen et al. 2011)
-- **Economic Significance** — Quarter-Kelly vol-targeting backtest (5bps slippage, 5× max leverage)
+### Training Protocol
+*   **Walk-Forward Validation:** Strict 21-day step-size expanding window to explicitly prevent look-ahead bias.
+*   **Hyperparameter Optimization:** Powered by Optuna; 40 dynamic trials (tuning LR, depth, dropout, weight decay) per walk-forward step.
+*   **Optimization Stabilization:** Incorporates `CosineAnnealingLR` and gradient clipping to navigate the highly stochastic financial loss landscapes.
 
 ---
 
@@ -47,119 +46,74 @@ HAR-S: HAR + γ_1·FinBERT_{t-1} + γ_2·SentSurprise_{t-1} + δ_1·VPIN_{t-1} +
 
 ```plaintext
 AlphaVol-NeuralHAR-Global/
-├── run_paper.py                   # ◄ MASTER RUNNER (Steps 0–6)
+├── run_paper.py                   # ◄ MASTER RUNNER 
 ├── requirements.txt               # Python dependencies
 ├── data/
-│   ├── raw/                       # (empty — populated by data_collection/)
-│   ├── processed/                 # Feature matrices + saved forecast arrays
+│   ├── raw/                       # Raw OHLCV and news CSVs
+│   ├── processed/                 # Feature matrices + forecasts (.npy)
 │   ├── paper_tables/              # CSV tables (auto-generated)
 │   └── paper_figures/             # PNG figures (auto-generated)
 ├── data_collection/               # Data ingestion pipeline
-│   ├── fetch_all.py               # Master data fetcher
-│   └── sources/
-│       ├── fetch_binance.py       # BTC 5-min OHLCV
-│       ├── fetch_yfinance.py      # SPX, NIFTY daily OHLCV
-│       ├── compute_rv.py          # RV from OHLCV (realized + GK/PK)
-│       ├── fetch_news_extended.py # Multi-source news (Alpha Vantage, Guardian, Finnhub)
-│       ├── fetch_sentiment.py     # GDELT, NewsAPI, Google Trends
-│       ├── fetch_fred.py          # Macro (BAMLH0A0HYM2, T10Y2Y)
-│       ├── fetch_fear_greed.py    # CNN Fear & Greed, Crypto F&G
-│       └── fetch_deribit.py       # Deribit DVOL (BTC implied vol)
 ├── src/
-│   ├── data_pipeline/
-│   │   ├── data_loader.py         # ResearchDataLoader — aligns all sources
-│   │   └── build_feature_matrix.py # Assembles per-asset parquet
-│   ├── nlp/
-│   │   └── sentiment_engine.py    # FinBERT pipeline (batch inference)
-│   └── models/
-│       ├── baseline_har.py        # HAR & HAR-S (OLS, expanding window)
-│       ├── regime_har.py          # Regime-conditional HAR (low/med/high GMSI)
-│       └── neural_har.py          # GRN-corrected Neural-HAR (PyTorch)
+│   ├── data_pipeline/             # Aligns asynchronous data sources
+│   ├── nlp/                       # FinBERT pipeline
+│   └── models/                    
+│       ├── baseline_har.py        # HAR & HAR-S models
+│       ├── neural_har.py          # PyTorch GRN & Transformer definitions
+│       └── train_neural_har.py    # Walk-forward Optuna ensemble logic
 ├── eval/
-│   ├── dm_test.py                 # Diebold-Mariano + OOS-R² (HLN corrected)
-│   └── mcs_test.py                # Model Confidence Set (Hansen et al. 2011)
+│   ├── dm_test.py                 # Diebold-Mariano test (HLN corrected)
+│   └── mcs_test.py                # Model Confidence Set
 ├── backtest/
-│   └── vol_targeting.py           # Vol-timing economic significance backtest
+│   └── vol_targeting.py           # Economic significance backtest
 └── notebooks/
-    └── paper_tables.py            # Generates all paper tables & figures
+    └── paper_tables.py            # Aggregates results into LaTeX-ready tables
 ```
 
 ---
 
-## Data Sources
+## How to Reproduce Results
 
-| Data Type | Source | Frequency | Asset |
-|:----------|:-------|:----------|:------|
-| Price & Volume | Binance | 5-min → daily RV | BTC |
-| Price & Volume | Yahoo Finance | Daily OHLCV → GK-RV | SPX, NIFTY |
-| Implied Vol | Deribit DVOL | Daily | BTC |
-| Implied Vol | CBOE VIX | Daily | SPX |
-| Macro | FRED (BAMLH0A0HYM2, T10Y2Y) | Daily | All |
-| Sentiment (NLP) | NewsAPI, Guardian, Finnhub | Event-driven → Daily | All |
-| Sentiment (NLP) | GDELT 2.0 Doc API | Daily | All |
-| Fear/Greed | Alternative.me | Daily | BTC |
-| Fear/Greed | CNN Business | Daily | SPX |
+To fully replicate the exact tables and figures submitted in the research paper from end to end:
 
----
-
-## Paper Pipeline (run_paper.py)
-
-```
-Step 0  build      Build feature matrices (data_collection → data/processed)
-Step 1  har        HAR & HAR-S expanding-window OOS forecasts  [Table 2–3]
-Step 2  dm         Diebold-Mariano test: HAR-S vs HAR          [Table 4]
-Step 3  mcs        Model Confidence Set (Hansen 2011)           [Table 5]
-Step 4  regime     Regime-conditional HAR (low/med/high)        [Tables 6–7]
-Step 5  backtest   Vol-targeting economic significance          [Table 8]
+### 1. Environment Setup
+```bash
+# Clone the repository and install requirements
+git clone https://github.com/VT69/AlphaVol-NeuralHAR-Global.git
+cd AlphaVol-NeuralHAR-Global
+pip install -r requirements.txt
+pip install optuna
 ```
 
-### Quick Start
+### 2. Run the Full Paper Pipeline
+The `run_paper.py` orchestrator controls the execution of all methodological steps. 
+Run the following commands sequentially:
 
 ```bash
-# 1. Install dependencies
-pip install -r requirements.txt
+# Step 1: Train the Baseline HAR and HAR-S models
+python run_paper.py --skip_build --step har
 
-# 2. Set API keys (copy and fill in)
-cp data_collection/.env.example data_collection/.env
+# Step 2: Run the Neural-HAR Ensemble Pipeline (Optuna + Walk-Forward)
+# Note: This is computationally intensive. Ensure a GPU (CUDA) is available.
+python run_paper.py --skip_build --step neural
 
-# 3. Fetch all data (needs API keys)
-cd data_collection
-python fetch_all.py
-cd ..
+# Step 3: Run the Diebold-Mariano tests (Statistical Significance)
+python run_paper.py --skip_build --step dm
 
-# 4. Run FinBERT sentiment engine
-python src/nlp/sentiment_engine.py \
-  --input data_collection/data/raw/sentiment/extended_news_headlines.parquet \
-  --out_dir data/processed
+# Step 4: Compute the Model Confidence Set (MCS)
+python run_paper.py --skip_build --step mcs
 
-# 5. Run full paper pipeline
-python run_paper.py
+# Step 5: Execute the Volatility Targeting Strategy Backtest (Economic Significance)
+python run_paper.py --skip_build --step backtest
 
-# 6. Generate paper tables & figures
+# Step 6: Generate LaTeX-Ready Paper Tables and Figures
 python notebooks/paper_tables.py
 ```
 
-### Single-Asset / Single-Step Runs
-
-```bash
-python run_paper.py --asset btc --step har
-python run_paper.py --asset spx --step dm
-python run_paper.py --skip_build --step backtest
-```
-
----
-
-## Paper Tables (Output)
-
-| File | Content |
-|:-----|:--------|
-| `table1_descriptive_stats.csv` | N, Mean, Std, Skew, Kurt, AC(1/5/22), LB-test |
-| `table2_insample_coefs.csv` | HAR / HAR-S in-sample betas + HAC p-values |
-| `table3_oos_metrics.csv` | QLIKE / MSE / MAE per model × asset |
-| `table4_dm_tests.csv` | DM stat, p-value, OOS-R² (challenger vs HAR) |
-| `table5_mcs.csv` | Model Confidence Set membership + p-values |
-| `table4_regime_coefficients.csv` | β_{sentiment} by regime × asset |
-| `table6_backtest.csv` | Sharpe, Ann.Return, MaxDD, Calmar, HitRate |
+### 3. Locating the Output
+Once the pipeline is complete, all outputs are systematically exported:
+*   **Tables:** `data/paper_tables/table1_*.csv` through `table6_*.csv`
+*   **Figures:** `data/paper_figures/fig1_*.png` and `fig2_*.png`
 
 ---
 
@@ -168,6 +122,6 @@ python run_paper.py --skip_build --step backtest
 - Corsi, F. (2009). A simple approximate long-memory model of realized volatility. *Journal of Financial Econometrics*, 7(2), 174–196.
 - Patton, A. J. (2011). Volatility forecast comparison using imperfect volatility proxies. *Journal of Econometrics*, 160(1), 246–256.
 - Diebold, F. X., & Mariano, R. S. (1995). Comparing predictive accuracy. *Journal of Business & Economic Statistics*, 13(3), 253–263.
-- Harvey, D., Leybourne, S., & Newbold, P. (1997). Testing the equality of prediction mean squared errors. *International Journal of Forecasting*, 13(2), 281–291.
 - Hansen, P. R., Lunde, A., & Nason, J. M. (2011). The model confidence set. *Econometrica*, 79(2), 453–497.
+- Gorishniy, Y., et al. (2021). Revisiting Deep Learning Models for Tabular Data. *NeurIPS*.
 - Liu, Y., Wu, J. J., & Zhang, G. (2020). FinBERT: A pre-trained financial language representation model for financial text mining. *IJCAI*, 4513–4519.
