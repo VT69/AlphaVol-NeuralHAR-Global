@@ -35,8 +35,6 @@ class GatedResidualNetwork(nn.Module):
         h = self.dropout(self.fc2(self.elu(self.fc1(x))))
         h = self.glu(h)
         res = self.res_proj(x)
-        return self.layer_norm(h + res)
-
 class DeepGRN(nn.Module):
     def __init__(self, input_dim, hidden_dim=16, dropout=0.3, num_layers=2):
         super(DeepGRN, self).__init__()
@@ -50,24 +48,70 @@ class DeepGRN(nn.Module):
             x = layer(x)
         return x
 
+class FeatureTokenizer(nn.Module):
+    """FT-Transformer Tokenizer: Embeds each tabular feature into a dense vector."""
+    def __init__(self, num_features, embed_dim):
+        super().__init__()
+        self.weight = nn.Parameter(torch.randn(num_features, embed_dim))
+        self.bias = nn.Parameter(torch.randn(num_features, embed_dim))
+    
+    def forward(self, x):
+        # x: (batch, num_features) -> (batch, num_features, embed_dim)
+        return x.unsqueeze(-1) * self.weight.unsqueeze(0) + self.bias.unsqueeze(0)
+
+class TabularTransformer(nn.Module):
+    """Transformer architecture adapted for Tabular Data."""
+    def __init__(self, input_dim, embed_dim=16, num_layers=2, dropout=0.3):
+        super().__init__()
+        self.tokenizer = FeatureTokenizer(input_dim, embed_dim)
+        self.cls_token = nn.Parameter(torch.randn(1, 1, embed_dim))
+        
+        # We ensure embed_dim is divisible by num_heads. We'll use 2 heads as a default for small dims.
+        num_heads = 2 if embed_dim % 2 == 0 else 1
+        num_heads = 4 if embed_dim % 4 == 0 else num_heads
+        
+        encoder_layer = nn.TransformerEncoderLayer(
+            d_model=embed_dim, 
+            nhead=num_heads, 
+            dim_feedforward=embed_dim * 2, 
+            dropout=dropout, 
+            batch_first=True
+        )
+        self.transformer = nn.TransformerEncoder(encoder_layer, num_layers=num_layers)
+        self.layer_norm = nn.LayerNorm(embed_dim)
+        
+    def forward(self, x):
+        batch_size = x.size(0)
+        tokens = self.tokenizer(x)
+        cls_tokens = self.cls_token.expand(batch_size, -1, -1)
+        
+        x_seq = torch.cat((cls_tokens, tokens), dim=1) # (batch, num_features+1, embed_dim)
+        out_seq = self.transformer(x_seq)
+        return self.layer_norm(out_seq[:, 0, :])
+
 class NeuralHAR(nn.Module):
     """
-    Issue 5: HAR prior + GRN correction separated correctly.
+    Issue 5: HAR prior + GRN/Transformer correction separated correctly.
     """
-    def __init__(self, num_har_features=3, num_exo_features=2, hidden_dim=16, dropout=0.3, num_layers=2):
+    def __init__(self, num_har_features=3, num_exo_features=2, hidden_dim=16, dropout=0.3, num_layers=2, arch_type="grn"):
         super().__init__()
         
         # HAR prior — linear weights
         self.har_linear = nn.Linear(num_har_features, 1, bias=True)
         
-        # GRN learns ONLY the residual from exogenous features
-        self.grn = DeepGRN(num_exo_features, hidden_dim, dropout, num_layers)
+        # Network learns ONLY the residual from exogenous features
+        self.arch_type = arch_type
+        if arch_type == "transformer":
+            self.network = TabularTransformer(num_exo_features, hidden_dim, num_layers, dropout)
+        else:
+            self.network = DeepGRN(num_exo_features, hidden_dim, dropout, num_layers)
+            
         self.residual_head = nn.Linear(hidden_dim, 1, bias=False)
         
     def forward(self, x_har, x_exo):
         har_prior = self.har_linear(x_har)
-        grn_out = self.grn(x_exo)
-        correction = self.residual_head(grn_out)
+        net_out = self.network(x_exo)
+        correction = self.residual_head(net_out)
         return har_prior + correction 
     
     def init_har_weights(self, beta_weights, intercept):
@@ -79,8 +123,14 @@ class NeuralHAR(nn.Module):
     def __repr__(self): # Issue 10
         total_params = sum(p.numel() for p in self.parameters())
         trainable = sum(p.numel() for p in self.parameters() if p.requires_grad)
-        return (f"NeuralHAR(har_features={self.har_linear.in_features}, "
-                f"exo_features={self.grn.layers[0].fc1.in_features}, "
+        
+        try:
+            exo_feats = self.network.layers[0].fc1.in_features if self.arch_type == "grn" else self.network.tokenizer.weight.size(0)
+        except:
+            exo_feats = "unknown"
+            
+        return (f"NeuralHAR(arch={self.arch_type}, har_features={self.har_linear.in_features}, "
+                f"exo_features={exo_feats}, "
                 f"total_params={total_params}, trainable={trainable})")
 
 # ==========================================

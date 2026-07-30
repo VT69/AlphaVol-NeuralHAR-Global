@@ -82,13 +82,15 @@ def run_optuna_tuning(train_loader, val_loader, num_exo, betas, intercept, n_tri
     logger.info(f"  Starting Optuna Hyperparameter Tuning ({n_trials} trials)...")
     
     def objective(trial):
+        arch_type = trial.suggest_categorical("arch_type", ["grn", "transformer"])
         hidden_dim = trial.suggest_categorical("hidden_dim", [16, 32, 64])
         num_layers = trial.suggest_int("num_layers", 1, 3)
         dropout = trial.suggest_float("dropout", 0.1, 0.5, step=0.1)
         lr = trial.suggest_float("lr", 1e-4, 5e-3, log=True)
         weight_decay = trial.suggest_float("weight_decay", 1e-6, 1e-3, log=True)
         
-        model = NeuralHAR(num_har_features=3, num_exo_features=num_exo, hidden_dim=hidden_dim, dropout=dropout, num_layers=num_layers)
+        model = NeuralHAR(num_har_features=3, num_exo_features=num_exo, hidden_dim=hidden_dim, 
+                          dropout=dropout, num_layers=num_layers, arch_type=arch_type)
         model.init_har_weights(beta_weights=betas.reshape(1, -1), intercept=intercept)
         
         optimizer = optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
@@ -195,7 +197,8 @@ def train_asset(asset: str,
     
     # Instantiate best model
     model = NeuralHAR(num_har_features=3, num_exo_features=num_exo, 
-                      hidden_dim=best_p["hidden_dim"], dropout=best_p["dropout"], num_layers=best_p["num_layers"])
+                      hidden_dim=best_p["hidden_dim"], dropout=best_p["dropout"], 
+                      num_layers=best_p["num_layers"], arch_type=best_p["arch_type"])
     model.init_har_weights(beta_weights=betas.reshape(1, -1), intercept=intercept)
     optimizer = optim.Adam(model.parameters(), lr=best_p["lr"], weight_decay=best_p["weight_decay"])
     
