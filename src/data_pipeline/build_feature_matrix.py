@@ -108,7 +108,7 @@ def build_feature_matrix(asset: str, data_dir: str, processed_dir: str) -> pd.Da
         logger.error(f"Skipping {asset} — run the data pipeline first.")
         return pd.DataFrame()
 
-    logger.info(f"Loaded base features: {df.shape}, range: {df.index.min()} → {df.index.max()}")
+    logger.info(f"Loaded base features: {df.shape}, range: {df.index.min()} -> {df.index.max()}")
 
     # ── 2. Sentiment scores ──
     sent_df = load_sentiment_scores(asset, processed_dir)
@@ -161,7 +161,7 @@ def build_feature_matrix(asset: str, data_dir: str, processed_dir: str) -> pd.Da
 
     # ── 6. Sanity checks ──
     logger.info(f"\nFeature Summary for {asset.upper()}:")
-    logger.info(f"  Date range : {df_final.index.min()} → {df_final.index.max()}")
+    logger.info(f"  Date range : {df_final.index.min()} -> {df_final.index.max()}")
     logger.info(f"  N rows     : {len(df_final)}")
     logger.info(f"  Columns    : {list(df_final.columns)}")
     logger.info(f"  NaN summary:\n{df_final.isnull().sum()[df_final.isnull().sum() > 0]}")
@@ -172,13 +172,13 @@ def build_feature_matrix(asset: str, data_dir: str, processed_dir: str) -> pd.Da
         if corr > 0.98:
             logger.warning(f"POTENTIAL LEAKAGE: Target_RV / RV_d correlation = {corr:.3f}")
         else:
-            logger.info(f"  Leakage check: Target_RV ~ RV_d corr = {corr:.3f} ✓")
+            logger.info(f"  Leakage check: Target_RV ~ RV_d corr = {corr:.3f} OK")
 
     # ── 7. Save ──
     os.makedirs(processed_dir, exist_ok=True)
     out_path = os.path.join(processed_dir, f"{asset}_feature_matrix.parquet")
     df_final.to_parquet(out_path, engine='pyarrow')
-    logger.info(f"Saved → {out_path}\n")
+    logger.info(f"Saved -> {out_path}\n")
 
     return df_final
 

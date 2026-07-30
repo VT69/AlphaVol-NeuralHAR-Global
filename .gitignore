@@ -13,7 +13,7 @@ data_collection/.env
 data/raw/*.json
 data_collection/data/raw/*.json
 
-# Large data files — use Git LFS or keep local only
+# Large data files >50MB — GitHub warns, use Git LFS or keep local
 data_collection/data/raw/ohlcv/btc_5min.parquet
 data_collection/data/raw/ohlcv/eth_5min.parquet
 data_collection/data/raw/ohlcv/btc_1h.parquet

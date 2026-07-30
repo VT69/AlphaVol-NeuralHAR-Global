@@ -2,7 +2,7 @@
 HAR Baseline & HAR-S (Augmented) Models
 =========================================
 Paper Steps 1 & 2:
-  HAR:   RV_t = α + β_d·RV_{t-1} + β_w·RV_{t-5:t-1} + β_m·RV_{t-22:t-1} + ε
+  HAR:   RV_t = alpha + β_d·RV_{t-1} + β_w·RV_{t-5:t-1} + β_m·RV_{t-22:t-1} + ε
   HAR-S: HAR + FinBERT_score + sent_surprise + VPIN + OBI
 
 Both use expanding-window OOS estimation (no lookahead bias).
@@ -112,7 +112,7 @@ def run_har_and_hars(feature_matrix_path: str, asset: str = 'btc',
     logger.info(f"Loading: {feature_matrix_path}")
     df = pd.read_parquet(feature_matrix_path).sort_index()
     df = df.dropna(subset=['RV_d', 'RV_w', 'RV_m', 'Target_RV'])
-    logger.info(f"Dataset: {len(df)} rows | {df.index.min().date()} → {df.index.max().date()}")
+    logger.info(f"Dataset: {len(df)} rows | {df.index.min().date()} -> {df.index.max().date()}")
 
     results = {}
 
@@ -129,7 +129,7 @@ def run_har_and_hars(feature_matrix_path: str, asset: str = 'btc',
         tag = mtype.lower().replace('-', 's')   # 'har' or 'hars'
         np.save(os.path.join(save_dir, f'forecasts_{tag}_{asset}.npy'), forecasts)
         np.save(os.path.join(save_dir, f'actuals_{asset}.npy'), actuals)
-        logger.info(f"  Saved forecasts → {save_dir}/forecasts_{tag}_{asset}.npy")
+        logger.info(f"  Saved forecasts -> {save_dir}/forecasts_{tag}_{asset}.npy")
 
     # ── Print coefficient comparison (Paper Table 1) ──
     _print_coefficient_table(results, df)

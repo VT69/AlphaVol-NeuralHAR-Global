@@ -76,15 +76,28 @@ class ResearchDataLoader:
 
     def compute_har_features(self, df):
         """
-        Computes HAR backbone: log_RV, RV_d, RV_w, RV_m
+        Computes HAR backbone: log_RV, RV_d, RV_w, RV_m.
+        Handles both pre-computed columns (from compute_rv.py parquets)
+        and raw 'rv'/'RV' columns. Pre-computed columns take priority.
         """
-        if 'rv' not in df.columns:
+        # Case 1: RV parquet already has all HAR columns pre-computed
+        if 'log_RV' in df.columns and 'RV_d' in df.columns:
             return df
-            
-        df['log_RV'] = np.log(df['rv'] + 1e-10) # Target variable mapping
-        df['RV_d'] = df['rv'].shift(1)
-        df['RV_w'] = df['rv'].shift(1).rolling(window=5, min_periods=1).mean()
-        df['RV_m'] = df['rv'].shift(1).rolling(window=22, min_periods=1).mean()
+
+        # Case 2: Raw RV column present (lowercase or uppercase)
+        rv_col = None
+        for candidate in ['rv', 'RV', 'GK', 'PK']:
+            if candidate in df.columns:
+                rv_col = candidate
+                break
+        if rv_col is None:
+            return df
+
+        rv = df[rv_col].replace(0, np.nan)
+        df['log_RV'] = np.log(rv.clip(lower=1e-12))
+        df['RV_d']   = df['log_RV'].shift(1)
+        df['RV_w']   = df['log_RV'].shift(1).rolling(window=5,  min_periods=1).mean()
+        df['RV_m']   = df['log_RV'].shift(1).rolling(window=22, min_periods=1).mean()
         return df
         
     def load(self, asset: str) -> pd.DataFrame:

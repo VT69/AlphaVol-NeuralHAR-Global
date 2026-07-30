@@ -323,3 +323,4 @@
 2026-07-29 22:32:55,953 - AlphaVol - WARNING - GDELT returned no data — saving empty file.
 2026-07-29 22:32:56,025 - AlphaVol - INFO - CACHE HIT: data/raw/sentiment/google_trends_weekly.parquet is fresh (0.35 hours old).
 2026-07-29 23:12:34,592 - AlphaVol - INFO - Running isolated source: news_extended
+2026-07-30 12:59:41,980 - AlphaVol - INFO - Running isolated source: news_extended

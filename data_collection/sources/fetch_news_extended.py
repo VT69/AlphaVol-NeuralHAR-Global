@@ -5,13 +5,13 @@ Sources (all free, all return actual text for FinBERT):
 
 1. Alpha Vantage News & Sentiment API
    - Free key: https://www.alphavantage.co/support/#api-key (instant)
-   - Coverage: 2020 → now, up to 1000 articles/request
+   - Coverage: 2020 -> now, up to 1000 articles/request
    - Assets: BTC (CRYPTO:BTC), SPX (SPY), NIFTY (HDB as proxy)
    - Bonus: includes pre-scored sentiment (cross-validate with FinBERT)
 
 2. The Guardian Open API  
    - Free key: https://open-platform.theguardian.com/access/support-us (instant)
-   - Coverage: 2010 → now, 200/page, 5000 requests/day
+   - Coverage: 2010 -> now, 200/page, 5000 requests/day
    - Full article text available
    - Queries: bitcoin, S&P 500, NIFTY India
 
@@ -130,7 +130,7 @@ def fetch_alphavantage_news(api_key: str, start_date: str = "2020-01-01") -> pd.
         except Exception as e:
             logger.error(f"  AlphaVantage error for {asset}: {e}")
 
-        time.sleep(15)  # AV free tier: 25 req/day → be conservative
+        time.sleep(15)  # AV free tier: 25 req/day -> be conservative
 
     return pd.DataFrame(all_records)
 
@@ -138,7 +138,7 @@ def fetch_alphavantage_news(api_key: str, start_date: str = "2020-01-01") -> pd.
 # ─────────────────────────────────────────────────────────────
 # SOURCE 2: The Guardian Open Platform API
 # Free key at: https://open-platform.theguardian.com/access/
-# Coverage: 2010 → now, 200/page, 5000 req/day
+# Coverage: 2010 -> now, 200/page, 5000 req/day
 # Full article text available on request
 # ─────────────────────────────────────────────────────────────
 def fetch_guardian_news(api_key: str, start_date: str = "2019-01-01",

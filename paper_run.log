@@ -1,0 +1,78 @@
+2026-07-30 13:28:45,270 [INFO] 
+======================================================================
+2026-07-30 13:28:45,271 [INFO]   Forecasting Realized Volatility in Markets:
+2026-07-30 13:28:45,271 [INFO]   Does Sentiment Add Information Beyond the HAR Framework?
+2026-07-30 13:28:45,272 [INFO]   Assets: ['BTC', 'SPX', 'NIFTY']  |  Step: regime
+2026-07-30 13:28:45,272 [INFO] ======================================================================
+2026-07-30 13:28:45,273 [INFO] 
+======================================================================
+2026-07-30 13:28:45,273 [INFO] STEP 4 — Regime-Conditional HAR  [Paper Tables 4–5]
+2026-07-30 13:28:45,274 [INFO] ======================================================================
+2026-07-30 13:28:50,032 [INFO] 
+  --- Asset: BTC ---
+2026-07-30 13:28:50,033 [INFO] Loading feature matrix: E:\AlphaVol-NeuralHAR-Global\data\processed\btc_feature_matrix.parquet
+2026-07-30 13:28:50,204 [INFO] 
+Regime distribution:
+        n_obs       start         end  mean_log_RV  std_log_RV
+regime                                                        
+low       447  2024-11-08  2026-07-28      -7.9140      0.9126
+medium    364  2024-01-26  2026-04-07      -7.6139      0.8040
+high     1933  2019-01-23  2025-04-16      -7.2361      1.1025
+2026-07-30 13:28:50,206 [INFO] 
+--- Regime: LOW (n=447) ---
+2026-07-30 13:28:50,207 [INFO]   Fitting HAR...
+2026-07-30 13:28:51,575 [INFO]   Fitting HAR-S...
+2026-07-30 13:28:54,082 [INFO] 
+--- Regime: MEDIUM (n=364) ---
+2026-07-30 13:28:54,083 [INFO]   Fitting HAR...
+2026-07-30 13:28:55,132 [INFO]   Fitting HAR-S...
+2026-07-30 13:28:56,834 [INFO] 
+--- Regime: HIGH (n=1933) ---
+2026-07-30 13:28:56,834 [INFO]   Fitting HAR...
+2026-07-30 13:29:05,610 [INFO]   Fitting HAR-S...
+2026-07-30 13:29:10,742 [INFO] 
+  --- Asset: SPX ---
+2026-07-30 13:29:10,742 [INFO] Loading feature matrix: E:\AlphaVol-NeuralHAR-Global\data\processed\spx_feature_matrix.parquet
+2026-07-30 13:29:10,767 [INFO] 
+Regime distribution:
+        n_obs       start         end  mean_log_RV  std_log_RV
+regime                                                        
+low       306  2024-11-08  2026-07-28     -11.4795      2.8146
+medium    245  2024-03-13  2026-04-07     -10.9425      2.5408
+high     2311  2015-02-05  2025-04-16     -11.0098      2.5623
+2026-07-30 13:29:10,772 [INFO] 
+--- Regime: LOW (n=306) ---
+2026-07-30 13:29:10,775 [INFO]   Fitting HAR...
+2026-07-30 13:29:12,043 [INFO]   Fitting HAR-S...
+2026-07-30 13:29:13,574 [INFO] 
+--- Regime: MEDIUM (n=245) ---
+2026-07-30 13:29:13,575 [INFO]   Fitting HAR...
+2026-07-30 13:29:14,311 [INFO]   Fitting HAR-S...
+2026-07-30 13:29:15,292 [INFO] 
+--- Regime: HIGH (n=2311) ---
+2026-07-30 13:29:15,293 [INFO]   Fitting HAR...
+2026-07-30 13:29:24,909 [INFO]   Fitting HAR-S...
+2026-07-30 13:29:27,846 [INFO] 
+  --- Asset: NIFTY ---
+2026-07-30 13:29:27,846 [INFO] Loading feature matrix: E:\AlphaVol-NeuralHAR-Global\data\processed\nifty_feature_matrix.parquet
+2026-07-30 13:29:27,873 [INFO] 
+Regime distribution:
+        n_obs       start         end  mean_log_RV  std_log_RV
+regime                                                        
+low       295  2024-11-12  2026-07-28     -11.2568      2.2314
+medium    232  2024-03-13  2026-04-07     -11.4057      2.7870
+high     2228  2015-02-05  2025-04-16     -10.8983      2.4204
+2026-07-30 13:29:27,876 [INFO] 
+--- Regime: LOW (n=295) ---
+2026-07-30 13:29:27,877 [INFO]   Fitting HAR...
+2026-07-30 13:29:28,631 [INFO]   Fitting HAR-S...
+2026-07-30 13:29:29,780 [INFO] 
+--- Regime: MEDIUM (n=232) ---
+2026-07-30 13:29:29,781 [INFO]   Fitting HAR...
+2026-07-30 13:29:30,411 [INFO]   Fitting HAR-S...
+2026-07-30 13:29:31,329 [INFO] 
+--- Regime: HIGH (n=2228) ---
+2026-07-30 13:29:31,329 [INFO]   Fitting HAR...
+2026-07-30 13:29:41,152 [INFO]   Fitting HAR-S...
+2026-07-30 13:29:43,611 [INFO] 
+  Pipeline complete.

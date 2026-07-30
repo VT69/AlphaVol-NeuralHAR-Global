@@ -35,8 +35,8 @@ def qlike_numpy(pred_log_rv: np.ndarray, actual_log_rv: np.ndarray) -> float:
 def _build_X(df: pd.DataFrame, model_type: str = 'HAR') -> pd.DataFrame:
     """
     Build design matrix for OLS.
-    model_type: 'HAR' → only RV lags
-                'HAR-S' → RV lags + sentiment + microstructure
+    model_type: 'HAR' -> only RV lags
+                'HAR-S' -> RV lags + sentiment + microstructure
     """
     har_cols = ['RV_d', 'RV_w', 'RV_m']
 
@@ -208,7 +208,7 @@ def run_regime_analysis(feature_matrix_path: str,
                     'MAE':   round(mae, 6),
                     'N_oos': len(actuals),
                 })
-                logger.info(f"    OOS → QLIKE={qlike:.4f}, MSE={mse:.4f}, MAE={mae:.4f}")
+                logger.info(f"    OOS -> QLIKE={qlike:.4f}, MSE={mse:.4f}, MAE={mae:.4f}")
 
     coef_df   = pd.DataFrame(coef_rows).set_index(['regime', 'model'])
     metric_df = pd.DataFrame(metric_rows).set_index(['regime', 'model'])

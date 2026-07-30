@@ -45,30 +45,64 @@ def compute_crypto_rv(symbol, in_path, out_path):
     logger.info(f"Saved {symbol} RV to {out_path}")
 
 def compute_tradfi_rv(symbol, in_path, out_path):
-    logger.info(f"Computing tradfi RV for {symbol}...")
-    if not os.path.exists(in_path): return
+    """
+    Compute daily realized volatility proxy for TradFi assets (SPX, NIFTY).
+
+    Primary RV estimator: Garman-Klass (1980) — optimal for daily OHLCV.
+    GK = 0.5*(log(H/L))^2 - (2*ln2 - 1)*(log(C/O))^2
+
+    This is ~7x more efficient than squared daily returns as an RV proxy
+    (Garman & Klass 1980), which is important for paper Table 1 statistics.
+
+    Also kept: Parkinson (PK), close-to-close (RV_cc).
+    All stored as lower-case 'rv' for consistency with data_loader.
+    """
+    logger.info(f"Computing tradfi RV (Garman-Klass) for {symbol}...")
+    if not os.path.exists(in_path):
+        return
     df = pd.read_parquet(in_path)
     if df.empty:
         pd.DataFrame().to_parquet(out_path, engine='pyarrow')
         return
 
-    # For TradFi, daily OHLCV is available, we compute PK and GK
+    # Ensure UTC index
+    df.index = pd.to_datetime(df.index, utc=True)
+
     h, l, o, c = df['high'], df['low'], df['open'], df['close']
-    res = pd.DataFrame(index=df.index)
-    res['PK'] = (np.log(h/l)**2) / (4 * np.log(2))
-    res['GK'] = 0.5 * (np.log(h/l)**2) - (2*np.log(2)-1) * (np.log(c/o)**2)
-    res['log_ret'] = df['log_ret']
-    
-    # Simple proxy for Daily RV
-    res['RV'] = res['log_ret']**2
-    res['log_RV'] = np.log(res['RV'].replace(0, np.nan))
-    res['RV_d'] = res['log_RV'].shift(1)
-    res['RV_w'] = res['log_RV'].shift(1).rolling(5).mean()
-    res['RV_m'] = res['log_RV'].shift(1).rolling(22).mean()
-    res['RV_ann'] = res['RV'] * 252
-    res['vol_ann'] = np.sqrt(res['RV_ann'].replace(0, np.nan))
-    
+
+    # Garman-Klass (primary RV proxy for daily OHLCV)
+    gk  = (0.5 * (np.log(h / l) ** 2)
+            - (2 * np.log(2) - 1) * (np.log(c / o) ** 2)).clip(lower=0)
+
+    # Parkinson (high-low range)
+    pk  = ((np.log(h / l) ** 2) / (4 * np.log(2))).clip(lower=0)
+
+    # Close-to-close (squared log-return, weakest estimator)
+    log_ret = df.get('log_ret', np.log(c / c.shift(1)).fillna(0))
+    rv_cc   = log_ret ** 2
+
+    res = pd.DataFrame({
+        'rv':      gk,          # ← primary RV (lowercase, matches data_loader)
+        'GK':      gk,
+        'PK':      pk,
+        'RV_cc':   rv_cc,
+        'log_ret': log_ret,
+    }, index=df.index)
+
+    # log(RV) and HAR lags
+    rv_safe      = res['rv'].replace(0, np.nan).clip(lower=1e-12)
+    res['log_RV'] = np.log(rv_safe)
+    res['RV_d']   = res['log_RV'].shift(1)
+    res['RV_w']   = res['log_RV'].shift(1).rolling(5,  min_periods=1).mean()
+    res['RV_m']   = res['log_RV'].shift(1).rolling(22, min_periods=1).mean()
+
+    # Annualised vol
+    ann = 252
+    res['RV_ann']  = res['rv'] * ann
+    res['vol_ann'] = np.sqrt(res['RV_ann'].clip(lower=0))
+
     res.to_parquet(out_path, engine='pyarrow')
+    logger.info(f"Saved {symbol} GK-RV to {out_path} ({len(res)} rows)")
 
 def run():
     compute_crypto_rv('BTC', 'data/raw/ohlcv/btc_5min.parquet', 'data/raw/realized_vol/btc_rv_daily.parquet')
