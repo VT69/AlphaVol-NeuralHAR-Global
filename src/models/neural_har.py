@@ -37,18 +37,31 @@ class GatedResidualNetwork(nn.Module):
         res = self.res_proj(x)
         return self.layer_norm(h + res)
 
+class DeepGRN(nn.Module):
+    def __init__(self, input_dim, hidden_dim=16, dropout=0.3, num_layers=2):
+        super(DeepGRN, self).__init__()
+        self.layers = nn.ModuleList()
+        self.layers.append(GatedResidualNetwork(input_dim, hidden_dim, dropout))
+        for _ in range(num_layers - 1):
+            self.layers.append(GatedResidualNetwork(hidden_dim, hidden_dim, dropout))
+            
+    def forward(self, x):
+        for layer in self.layers:
+            x = layer(x)
+        return x
+
 class NeuralHAR(nn.Module):
     """
     Issue 5: HAR prior + GRN correction separated correctly.
     """
-    def __init__(self, num_har_features=3, num_exo_features=2, hidden_dim=16, dropout=0.3):
+    def __init__(self, num_har_features=3, num_exo_features=2, hidden_dim=16, dropout=0.3, num_layers=2):
         super().__init__()
         
         # HAR prior — linear weights
         self.har_linear = nn.Linear(num_har_features, 1, bias=True)
         
         # GRN learns ONLY the residual from exogenous features
-        self.grn = GatedResidualNetwork(num_exo_features, hidden_dim, dropout)
+        self.grn = DeepGRN(num_exo_features, hidden_dim, dropout, num_layers)
         self.residual_head = nn.Linear(hidden_dim, 1, bias=False)
         
     def forward(self, x_har, x_exo):
@@ -67,7 +80,7 @@ class NeuralHAR(nn.Module):
         total_params = sum(p.numel() for p in self.parameters())
         trainable = sum(p.numel() for p in self.parameters() if p.requires_grad)
         return (f"NeuralHAR(har_features={self.har_linear.in_features}, "
-                f"exo_features={self.grn.fc1.in_features}, "
+                f"exo_features={self.grn.layers[0].fc1.in_features}, "
                 f"total_params={total_params}, trainable={trainable})")
 
 # ==========================================
@@ -203,7 +216,7 @@ if __name__ == "__main__":
     test_loader = DataLoader(test_dataset, batch_size=64, shuffle=False)
     
     # Instantiate Model
-    model = NeuralHAR(num_har_features=3, num_exo_features=2, hidden_dim=16, dropout=0.3)
+    model = NeuralHAR(num_har_features=3, num_exo_features=2, hidden_dim=16, dropout=0.3, num_layers=2)
     logger.info(f"Model Structure: {model}")
     
     logger.info("Beginning Deep Learning Training Loop...")
