@@ -169,11 +169,18 @@ def step_dm(assets: list, har_results: dict) -> dict:
         # Load Neural-HAR forecasts if trained
         nn_path = os.path.join(PROCESSED_DIR, f"forecasts_neural_har_{asset}.npy")
         if os.path.exists(nn_path):
-            n_oos = min(len(act), len(np.load(nn_path)))
-            forecasts["Neural-HAR"] = np.load(nn_path)[:n_oos]
-            act = act[:n_oos]
+            forecasts["Neural-HAR"] = np.load(nn_path)
 
-        logger.info(f"\n  Asset: {asset.upper()}  |  OOS periods: {len(act)}")
+        # Align all to the shortest array from the END (chronological alignment)
+        min_n = len(act)
+        for k in forecasts:
+            min_n = min(min_n, len(forecasts[k]))
+        
+        act = act[-min_n:]
+        for k in forecasts:
+            forecasts[k] = forecasts[k][-min_n:]
+
+        logger.info(f"\n  Asset: {asset.upper()}  |  OOS periods: {min_n}")
         try:
             dm_df = run_full_comparison(act, forecasts, benchmark_key="HAR",
                                         losses=["QLIKE", "MSE"])
@@ -204,26 +211,33 @@ def step_mcs(assets: list, har_results: dict, alpha: float = 0.10,
         res = har_results[asset]
         act = res["HAR"]["actuals"]
 
-        # Build QLIKE loss matrix
-        loss_dict = {}
-        for mname in ["HAR", "HAR-S"]:
-            fc = res[mname]["forecasts"]
-            n  = min(len(act), len(fc))
-            av = np.exp(np.clip(act[:n], -15, 15))
-            pv = np.exp(np.clip(fc[:n],  -15, 15))
-            loss_dict[mname] = av / pv - np.log(av / pv) - 1
-
+        # Find minimum length
+        lengths = [len(act), len(res["HAR"]["forecasts"]), len(res["HAR-S"]["forecasts"])]
+        
         nn_path = os.path.join(PROCESSED_DIR, f"forecasts_neural_har_{asset}.npy")
         if os.path.exists(nn_path):
             fc_nn = np.load(nn_path)
-            n = min(len(act), len(fc_nn))
-            av = np.exp(np.clip(act[:n], -15, 15))
-            pv = np.exp(np.clip(fc_nn[:n], -15, 15))
+            lengths.append(len(fc_nn))
+            
+        min_n = min(lengths)
+        
+        # Build QLIKE loss matrix aligned to the END of the dataset
+        loss_dict = {}
+        act_aligned = act[-min_n:]
+        
+        for mname in ["HAR", "HAR-S"]:
+            fc = res[mname]["forecasts"][-min_n:]
+            av = np.exp(np.clip(act_aligned, -15, 15))
+            pv = np.exp(np.clip(fc,  -15, 15))
+            loss_dict[mname] = av / pv - np.log(av / pv) - 1
+
+        if os.path.exists(nn_path):
+            fc = fc_nn[-min_n:]
+            av = np.exp(np.clip(act_aligned, -15, 15))
+            pv = np.exp(np.clip(fc, -15, 15))
             loss_dict["Neural-HAR"] = av / pv - np.log(av / pv) - 1
 
-        # Align lengths
-        min_n = min(len(v) for v in loss_dict.values())
-        L_df  = pd.DataFrame({k: v[:min_n] for k, v in loss_dict.items()})
+        L_df = pd.DataFrame(loss_dict)
 
         logger.info(f"\n  Asset: {asset.upper()}  |  T={len(L_df)}  |  B={B}")
         try:
@@ -305,20 +319,27 @@ def step_backtest(assets: list, har_results: dict) -> dict:
             logger.warning(f"  OHLCV not found for {asset} — using zero returns placeholder.")
             returns = np.zeros(len(fm))
 
-        # Build forecast dict (align OOS periods)
-        res   = har_results[asset]
-        n_oos = len(res["HAR"]["actuals"])
-        forecasts_dict = {
-            "HAR":   res["HAR"]["forecasts"][:n_oos],
-            "HAR-S": res["HAR-S"]["forecasts"][:n_oos],
-        }
+        # Build forecast dict (align OOS periods to END)
+        res = har_results[asset]
+        lengths = [len(res["HAR"]["actuals"]), len(res["HAR"]["forecasts"]), len(res["HAR-S"]["forecasts"])]
+        
         nn_path = os.path.join(PROCESSED_DIR, f"forecasts_neural_har_{asset}.npy")
         if os.path.exists(nn_path):
-            forecasts_dict["Neural-HAR"] = np.load(nn_path)[:n_oos]
+            fc_nn = np.load(nn_path)
+            lengths.append(len(fc_nn))
+            
+        min_n = min(lengths)
+        
+        forecasts_dict = {
+            "HAR":   res["HAR"]["forecasts"][-min_n:],
+            "HAR-S": res["HAR-S"]["forecasts"][-min_n:],
+        }
+        if os.path.exists(nn_path):
+            forecasts_dict["Neural-HAR"] = fc_nn[-min_n:]
 
-        returns_oos = returns[-n_oos:]
+        returns_oos = returns[-min_n:]
 
-        logger.info(f"\n  Asset: {asset.upper()}  |  OOS N={n_oos}")
+        logger.info(f"\n  Asset: {asset.upper()}  |  OOS N={min_n}")
         try:
             bt_df, _ = run_vol_timing_backtest(
                 returns_oos, forecasts_dict, asset=asset,
