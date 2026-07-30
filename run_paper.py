@@ -525,9 +525,8 @@ def main():
         backtest_results = step_backtest(assets, har_results)
 
     # ── Step 6: Export Tables ──────────────────────────────────────────
-    if run_all:
-        export_paper_tables(har_results, dm_results, mcs_results,
-                            regime_results, backtest_results, args.out_dir)
+    export_paper_tables(har_results, dm_results, mcs_results,
+                        regime_results, backtest_results, args.out_dir)
 
     logger.info("\n  Pipeline complete.")
 
