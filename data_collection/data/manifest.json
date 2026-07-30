@@ -5,8 +5,8 @@
         "asset": "BTC/USDT",
         "frequency": "5min",
         "date_from": "2019-01-01T00:00:00+00:00",
-        "date_to": "2026-05-15T15:25:00+00:00",
-        "rows": 774376,
+        "date_to": "2026-07-29T16:25:00+00:00",
+        "rows": 795988,
         "columns": [
             "open",
             "high",
@@ -29,9 +29,9 @@
             "number_of_trades": 0.0,
             "taker_buy_base_vol": 0.0,
             "taker_buy_quote_vol": 0.0,
-            "log_ret": 1.2913623356095748e-06
+            "log_ret": 1.2563003462363755e-06
         },
-        "pull_timestamp": "2026-05-15T19:15:45.842889+00:00",
+        "pull_timestamp": "2026-07-29T16:42:11.219450+00:00",
         "status": "OK"
     },
     {
@@ -40,8 +40,8 @@
         "asset": "ETH/USDT",
         "frequency": "5min",
         "date_from": "2019-01-01T00:00:00+00:00",
-        "date_to": "2026-05-15T15:30:00+00:00",
-        "rows": 774377,
+        "date_to": "2026-07-29T16:35:00+00:00",
+        "rows": 795990,
         "columns": [
             "open",
             "high",
@@ -64,9 +64,9 @@
             "number_of_trades": 0.0,
             "taker_buy_base_vol": 0.0,
             "taker_buy_quote_vol": 0.0,
-            "log_ret": 1.2913606679950464e-06
+            "log_ret": 1.2562971896631868e-06
         },
-        "pull_timestamp": "2026-05-15T19:15:46.041917+00:00",
+        "pull_timestamp": "2026-07-29T16:42:11.387830+00:00",
         "status": "OK"
     },
     {
@@ -75,8 +75,8 @@
         "asset": "BTC/USDT",
         "frequency": "1h",
         "date_from": "2019-01-01T00:00:00+00:00",
-        "date_to": "2026-05-15T15:00:00+00:00",
-        "rows": 64540,
+        "date_to": "2026-07-29T16:00:00+00:00",
+        "rows": 66341,
         "columns": [
             "open",
             "high",
@@ -99,9 +99,9 @@
             "number_of_trades": 0.0,
             "taker_buy_base_vol": 0.0,
             "taker_buy_quote_vol": 0.0,
-            "log_ret": 1.5494267121165168e-05
+            "log_ret": 1.5073634705536546e-05
         },
-        "pull_timestamp": "2026-05-15T19:15:46.074080+00:00",
+        "pull_timestamp": "2026-07-29T16:42:11.431226+00:00",
         "status": "OK"
     },
     {
@@ -110,8 +110,8 @@
         "asset": "BTC/USDT",
         "frequency": "1d",
         "date_from": "2019-01-01T00:00:00+00:00",
-        "date_to": "2026-05-15T00:00:00+00:00",
-        "rows": 2692,
+        "date_to": "2026-07-29T00:00:00+00:00",
+        "rows": 2767,
         "columns": [
             "open",
             "high",
@@ -134,9 +134,9 @@
             "number_of_trades": 0.0,
             "taker_buy_base_vol": 0.0,
             "taker_buy_quote_vol": 0.0,
-            "log_ret": 0.0003714710252600297
+            "log_ret": 0.0003614022406938923
         },
-        "pull_timestamp": "2026-05-15T19:15:46.084987+00:00",
+        "pull_timestamp": "2026-07-29T16:42:11.452670+00:00",
         "status": "OK"
     },
     {
@@ -145,8 +145,8 @@
         "asset": "ETH/USDT",
         "frequency": "1d",
         "date_from": "2019-01-01T00:00:00+00:00",
-        "date_to": "2026-05-15T00:00:00+00:00",
-        "rows": 2692,
+        "date_to": "2026-07-29T00:00:00+00:00",
+        "rows": 2767,
         "columns": [
             "open",
             "high",
@@ -169,9 +169,9 @@
             "number_of_trades": 0.0,
             "taker_buy_base_vol": 0.0,
             "taker_buy_quote_vol": 0.0,
-            "log_ret": 0.0003714710252600297
+            "log_ret": 0.0003614022406938923
         },
-        "pull_timestamp": "2026-05-15T19:15:46.093589+00:00",
+        "pull_timestamp": "2026-07-29T16:42:11.471859+00:00",
         "status": "OK"
     },
     {
@@ -180,8 +180,8 @@
         "asset": "^GSPC",
         "frequency": "1d",
         "date_from": "2015-01-02T00:00:00+00:00",
-        "date_to": "2026-05-15T00:00:00+00:00",
-        "rows": 2859,
+        "date_to": "2026-07-29T00:00:00+00:00",
+        "rows": 2909,
         "columns": [
             "close",
             "high",
@@ -196,9 +196,9 @@
             "low": 0.0,
             "open": 0.0,
             "volume": 0.0,
-            "log_ret": 0.0003497726477789437
+            "log_ret": 0.00034376074252320387
         },
-        "pull_timestamp": "2026-05-15T19:15:46.100035+00:00",
+        "pull_timestamp": "2026-07-29T16:42:11.478450+00:00",
         "status": "OK"
     },
     {
@@ -207,8 +207,8 @@
         "asset": "^NSEI",
         "frequency": "1d",
         "date_from": "2015-01-02T00:00:00+00:00",
-        "date_to": "2026-05-15T00:00:00+00:00",
-        "rows": 2797,
+        "date_to": "2026-07-29T00:00:00+00:00",
+        "rows": 2848,
         "columns": [
             "close",
             "high",
@@ -223,9 +223,9 @@
             "low": 0.0,
             "open": 0.0,
             "volume": 0.0,
-            "log_ret": 0.0003575259206292456
+            "log_ret": 0.00035112359550561797
         },
-        "pull_timestamp": "2026-05-15T19:15:46.105840+00:00",
+        "pull_timestamp": "2026-07-29T16:42:11.485902+00:00",
         "status": "OK"
     },
     {
@@ -234,8 +234,8 @@
         "asset": "BTC/USDT",
         "frequency": "1d",
         "date_from": "2019-01-01T00:00:00",
-        "date_to": "2026-05-15T00:00:00",
-        "rows": 2692,
+        "date_to": "2026-07-29T00:00:00",
+        "rows": 2767,
         "columns": [
             "RV",
             "BV",
@@ -258,13 +258,13 @@
             "PK": 0.0,
             "GK": 0.0,
             "log_RV": 0.0,
-            "RV_d": 0.0003714710252600297,
-            "RV_w": 0.0018573551263001485,
-            "RV_m": 0.008172362555720654,
+            "RV_d": 0.0003614022406938923,
+            "RV_w": 0.0018070112034694614,
+            "RV_m": 0.00795084929526563,
             "RV_ann": 0.0,
             "vol_ann": 0.0
         },
-        "pull_timestamp": "2026-05-15T19:15:46.112177+00:00",
+        "pull_timestamp": "2026-07-29T16:42:11.505245+00:00",
         "status": "OK"
     },
     {
@@ -272,8 +272,8 @@
         "source": "Deribit",
         "asset": "BTC",
         "frequency": "1d",
-        "date_from": "2023-08-20T00:00:00+00:00",
-        "date_to": "2026-05-15T00:00:00+00:00",
+        "date_from": "2023-11-03T00:00:00+00:00",
+        "date_to": "2026-07-29T00:00:00+00:00",
         "rows": 1000,
         "columns": [
             "timestamp",
@@ -289,7 +289,7 @@
             "low": 0.0,
             "dvol_close": 0.0
         },
-        "pull_timestamp": "2026-05-15T19:15:46.124433+00:00",
+        "pull_timestamp": "2026-07-29T16:42:11.527870+00:00",
         "status": "OK"
     },
     {
@@ -298,8 +298,8 @@
         "asset": "BTC/USDT",
         "frequency": "1d",
         "date_from": "2019-01-01T00:00:00",
-        "date_to": "2026-05-15T00:00:00",
-        "rows": 2692,
+        "date_to": "2026-07-29T00:00:00",
+        "rows": 2767,
         "columns": [
             "OBI_mean",
             "OBI_sq",
@@ -320,7 +320,7 @@
             "RS": 0.0,
             "RK": 0.0
         },
-        "pull_timestamp": "2026-05-15T19:15:46.130731+00:00",
+        "pull_timestamp": "2026-07-29T16:42:11.547109+00:00",
         "status": "OK"
     },
     {
@@ -329,15 +329,15 @@
         "asset": "BTC/USDT",
         "frequency": "1d",
         "date_from": "2019-01-01T00:00:00+00:00",
-        "date_to": "2026-05-15T00:00:00+00:00",
-        "rows": 2692,
+        "date_to": "2026-07-29T00:00:00+00:00",
+        "rows": 2767,
         "columns": [
             "VPIN"
         ],
         "missing_pct": {
-            "VPIN": 0.0007429420505200594
+            "VPIN": 0.0007228044813877846
         },
-        "pull_timestamp": "2026-05-15T19:15:46.135863+00:00",
+        "pull_timestamp": "2026-07-29T16:42:11.565667+00:00",
         "status": "OK"
     },
     {
@@ -347,7 +347,7 @@
         "frequency": "Event",
         "date_from": "Unknown",
         "date_to": "Unknown",
-        "rows": 199,
+        "rows": 198,
         "columns": [
             "asset",
             "published_at",
@@ -362,11 +362,11 @@
             "published_at": 0.0,
             "source_name": 0.0,
             "title": 0.0,
-            "description": 0.005025125628140704,
+            "description": 0.010101010101010102,
             "url": 0.0,
-            "author": 0.03015075376884422
+            "author": 0.030303030303030304
         },
-        "pull_timestamp": "2026-05-15T19:15:46.142398+00:00",
+        "pull_timestamp": "2026-07-29T16:42:11.586345+00:00",
         "status": "OK"
     },
     {
@@ -379,7 +379,7 @@
         "rows": 0,
         "columns": [],
         "missing_pct": {},
-        "pull_timestamp": "2026-05-15T19:15:46.144791+00:00",
+        "pull_timestamp": "2026-07-29T16:42:11.601785+00:00",
         "status": "OK"
     },
     {
@@ -387,24 +387,12 @@
         "source": "Google Trends",
         "asset": "Global",
         "frequency": "1w",
-        "date_from": "2021-05-09T00:00:00+00:00",
-        "date_to": "2026-05-10T00:00:00+00:00",
-        "rows": 262,
-        "columns": [
-            "BTC_bitcoin_crash",
-            "BTC_crypto_fear",
-            "SPX_stock_market_crash",
-            "SPX_recession",
-            "NIFTY_nifty"
-        ],
-        "missing_pct": {
-            "BTC_bitcoin_crash": 0.0,
-            "BTC_crypto_fear": 0.0,
-            "SPX_stock_market_crash": 0.0,
-            "SPX_recession": 0.0,
-            "NIFTY_nifty": 0.0
-        },
-        "pull_timestamp": "2026-05-15T19:15:46.152613+00:00",
+        "date_from": null,
+        "date_to": null,
+        "rows": 0,
+        "columns": [],
+        "missing_pct": {},
+        "pull_timestamp": "2026-07-29T16:42:11.605645+00:00",
         "status": "OK"
     },
     {
@@ -457,7 +445,7 @@
             "INDIRLTLT01STM": 0.0,
             "INDCPIALLMINMEI": 0.0
         },
-        "pull_timestamp": "2026-05-15T19:15:46.166081+00:00",
+        "pull_timestamp": "2026-07-29T16:42:11.628452+00:00",
         "status": "OK"
     },
     {
@@ -470,7 +458,7 @@
         "rows": 0,
         "columns": [],
         "missing_pct": {},
-        "pull_timestamp": "2026-05-15T19:15:46.169324+00:00",
+        "pull_timestamp": "2026-07-29T16:42:11.632727+00:00",
         "status": "OK"
     },
     {
@@ -495,7 +483,7 @@
             "time_until_update": 0.9996666666666667,
             "date": 0.0
         },
-        "pull_timestamp": "2026-05-15T19:15:46.187175+00:00",
+        "pull_timestamp": "2026-07-29T16:42:11.664141+00:00",
         "status": "OK"
     },
     {
@@ -504,8 +492,8 @@
         "asset": "SPX",
         "frequency": "1d",
         "date_from": "2011-01-03T00:00:00+00:00",
-        "date_to": "2026-05-15T00:00:00+00:00",
-        "rows": 3865,
+        "date_to": "2026-07-29T00:00:00+00:00",
+        "rows": 3908,
         "columns": [
             "VIX",
             "VIX9D",
@@ -520,7 +508,7 @@
             "term_slope": 0.0,
             "contango": 0.0
         },
-        "pull_timestamp": "2026-05-15T19:15:46.195243+00:00",
+        "pull_timestamp": "2026-07-29T16:42:11.683704+00:00",
         "status": "OK"
     }
 ]

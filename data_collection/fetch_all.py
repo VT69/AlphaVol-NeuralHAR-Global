@@ -1,7 +1,7 @@
 import argparse
 from utils.logger import logger
 from utils.manifest import ManifestGenerator
-from sources import fetch_binance, compute_rv, fetch_yfinance, fetch_deribit, compute_microstructure, fetch_fred, fetch_sentiment, fetch_fear_greed
+from sources import fetch_binance, compute_rv, fetch_yfinance, fetch_deribit, compute_microstructure, fetch_fred, fetch_sentiment, fetch_fear_greed, fetch_news_extended
 
 def main():
     parser = argparse.ArgumentParser(description="AlphaVol Data Collection Pipeline")
@@ -12,15 +12,17 @@ def main():
     args = parser.parse_args()
 
     sources_to_run = {
-        'binance': fetch_binance.run,
-        'yfinance': fetch_yfinance.run,
-        'rv': compute_rv.run,
-        'deribit': fetch_deribit.run,
+        'binance':       fetch_binance.run,
+        'yfinance':      fetch_yfinance.run,
+        'rv':            compute_rv.run,
+        'deribit':       fetch_deribit.run,
         'microstructure': compute_microstructure.run,
-        'fred': fetch_fred.run,
-        'sentiment': fetch_sentiment.run,
-        'fear_greed': fetch_fear_greed.run,
+        'fred':          fetch_fred.run,
+        'sentiment':     fetch_sentiment.run,
+        'fear_greed':    fetch_fear_greed.run,
+        'news_extended': fetch_news_extended.run,   # NEW: multi-source news with text
     }
+
 
     if args.source:
         if args.source == 'manifest':
