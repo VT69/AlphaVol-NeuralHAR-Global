@@ -1,0 +1,938 @@
+{
+  "raw": {
+    "crypto_fear_greed.parquet": {
+      "path": "data_collection/data/raw/macro/crypto_fear_greed.parquet",
+      "shape": [
+        3000,
+        5
+      ],
+      "columns": [
+        "value",
+        "value_classification",
+        "timestamp",
+        "time_until_update",
+        "date"
+      ],
+      "index_dtype": "int64",
+      "index_min": "0",
+      "index_max": "2999"
+    },
+    "fear_greed_index.parquet": {
+      "path": "data_collection/data/raw/macro/fear_greed_index.parquet",
+      "shape": [
+        0,
+        0
+      ],
+      "columns": [],
+      "index_dtype": "int64",
+      "index_min": "nan",
+      "index_max": "nan"
+    },
+    "fred_series.parquet": {
+      "path": "data_collection/data/raw/macro/fred_series.parquet",
+      "shape": [
+        4152,
+        19
+      ],
+      "columns": [
+        "VIXCLS",
+        "VXNCLS",
+        "OVXCLS",
+        "GVZCLS",
+        "BAMLH0A0HYM2",
+        "BAMLC0A0CM",
+        "TEDRATE",
+        "T10Y2Y",
+        "T10Y3M",
+        "DPCREDIT",
+        "DCOILWTICO",
+        "DTWEXBGS",
+        "DFF",
+        "CPIAUCSL",
+        "UNRATE",
+        "USREC",
+        "M2SL",
+        "INDIRLTLT01STM",
+        "INDCPIALLMINMEI"
+      ],
+      "index_dtype": "datetime64[ns, UTC]",
+      "index_min": "2015-01-01 00:00:00+00:00",
+      "index_max": "2026-05-14 00:00:00+00:00"
+    },
+    "btc_agg_trades.parquet": {
+      "path": "data_collection/data/raw/microstructure/btc_agg_trades.parquet",
+      "shape": [
+        1000,
+        7
+      ],
+      "columns": [
+        "agg_trade_id",
+        "price",
+        "qty",
+        "first_trade_id",
+        "last_trade_id",
+        "timestamp",
+        "is_buyer_maker"
+      ],
+      "index_dtype": "int64",
+      "index_min": "0",
+      "index_max": "999"
+    },
+    "btc_obi_daily.parquet": {
+      "path": "data_collection/data/raw/microstructure/btc_obi_daily.parquet",
+      "shape": [
+        2767,
+        8
+      ],
+      "columns": [
+        "OBI_mean",
+        "OBI_sq",
+        "OBI_std",
+        "OBI_abs",
+        "ILLIQ",
+        "Roll",
+        "RS",
+        "RK"
+      ],
+      "index_dtype": "datetime64[ns]",
+      "index_min": "2019-01-01 00:00:00",
+      "index_max": "2026-07-29 00:00:00"
+    },
+    "btc_orderbook_snapshots.parquet": {
+      "path": "data_collection/data/raw/microstructure/btc_orderbook_snapshots.parquet",
+      "shape": [
+        40,
+        4
+      ],
+      "columns": [
+        "price",
+        "quantity",
+        "side",
+        "timestamp"
+      ],
+      "index_dtype": "int64",
+      "index_min": "0",
+      "index_max": "39"
+    },
+    "btc_vpin_daily.parquet": {
+      "path": "data_collection/data/raw/microstructure/btc_vpin_daily.parquet",
+      "shape": [
+        2767,
+        1
+      ],
+      "columns": [
+        "VPIN"
+      ],
+      "index_dtype": "datetime64[ns, UTC]",
+      "index_min": "2019-01-01 00:00:00+00:00",
+      "index_max": "2026-07-29 00:00:00+00:00"
+    },
+    "btc_1d.parquet": {
+      "path": "data_collection/data/raw/ohlcv/btc_1d.parquet",
+      "shape": [
+        2767,
+        10
+      ],
+      "columns": [
+        "open",
+        "high",
+        "low",
+        "close",
+        "volume",
+        "quote_asset_volume",
+        "number_of_trades",
+        "taker_buy_base_vol",
+        "taker_buy_quote_vol",
+        "log_ret"
+      ],
+      "index_dtype": "datetime64[ns, UTC]",
+      "index_min": "2019-01-01 00:00:00+00:00",
+      "index_max": "2026-07-29 00:00:00+00:00"
+    },
+    "btc_1h.parquet": {
+      "path": "data_collection/data/raw/ohlcv/btc_1h.parquet",
+      "shape": [
+        66341,
+        10
+      ],
+      "columns": [
+        "open",
+        "high",
+        "low",
+        "close",
+        "volume",
+        "quote_asset_volume",
+        "number_of_trades",
+        "taker_buy_base_vol",
+        "taker_buy_quote_vol",
+        "log_ret"
+      ],
+      "index_dtype": "datetime64[ns, UTC]",
+      "index_min": "2019-01-01 00:00:00+00:00",
+      "index_max": "2026-07-29 16:00:00+00:00"
+    },
+    "btc_5min.parquet": {
+      "path": "data_collection/data/raw/ohlcv/btc_5min.parquet",
+      "shape": [
+        795988,
+        11
+      ],
+      "columns": [
+        "open",
+        "high",
+        "low",
+        "close",
+        "volume",
+        "quote_asset_volume",
+        "number_of_trades",
+        "taker_buy_base_vol",
+        "taker_buy_quote_vol",
+        "log_ret",
+        "open_time"
+      ]
+    },
+    "dxy_1d.parquet": {
+      "path": "data_collection/data/raw/ohlcv/dxy_1d.parquet",
+      "shape": [
+        2909,
+        6
+      ],
+      "columns": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "volume",
+        "log_ret"
+      ],
+      "index_dtype": "datetime64[ns, UTC]",
+      "index_min": "2015-01-02 00:00:00+00:00",
+      "index_max": "2026-07-29 00:00:00+00:00"
+    },
+    "eth_1d.parquet": {
+      "path": "data_collection/data/raw/ohlcv/eth_1d.parquet",
+      "shape": [
+        2767,
+        10
+      ],
+      "columns": [
+        "open",
+        "high",
+        "low",
+        "close",
+        "volume",
+        "quote_asset_volume",
+        "number_of_trades",
+        "taker_buy_base_vol",
+        "taker_buy_quote_vol",
+        "log_ret"
+      ],
+      "index_dtype": "datetime64[ns, UTC]",
+      "index_min": "2019-01-01 00:00:00+00:00",
+      "index_max": "2026-07-29 00:00:00+00:00"
+    },
+    "eth_5min.parquet": {
+      "path": "data_collection/data/raw/ohlcv/eth_5min.parquet",
+      "shape": [
+        795990,
+        11
+      ],
+      "columns": [
+        "open",
+        "high",
+        "low",
+        "close",
+        "volume",
+        "quote_asset_volume",
+        "number_of_trades",
+        "taker_buy_base_vol",
+        "taker_buy_quote_vol",
+        "log_ret",
+        "open_time"
+      ]
+    },
+    "gold_1d.parquet": {
+      "path": "data_collection/data/raw/ohlcv/gold_1d.parquet",
+      "shape": [
+        2908,
+        6
+      ],
+      "columns": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "volume",
+        "log_ret"
+      ],
+      "index_dtype": "datetime64[ns, UTC]",
+      "index_min": "2015-01-02 00:00:00+00:00",
+      "index_max": "2026-07-29 00:00:00+00:00"
+    },
+    "irx3m_1d.parquet": {
+      "path": "data_collection/data/raw/ohlcv/irx3m_1d.parquet",
+      "shape": [
+        2906,
+        6
+      ],
+      "columns": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "volume",
+        "log_ret"
+      ],
+      "index_dtype": "datetime64[ns, UTC]",
+      "index_min": "2015-01-02 00:00:00+00:00",
+      "index_max": "2026-07-29 00:00:00+00:00"
+    },
+    "nifty_1d.parquet": {
+      "path": "data_collection/data/raw/ohlcv/nifty_1d.parquet",
+      "shape": [
+        2848,
+        6
+      ],
+      "columns": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "volume",
+        "log_ret"
+      ],
+      "index_dtype": "datetime64[ns, UTC]",
+      "index_min": "2015-01-02 00:00:00+00:00",
+      "index_max": "2026-07-29 00:00:00+00:00"
+    },
+    "spx_1d.parquet": {
+      "path": "data_collection/data/raw/ohlcv/spx_1d.parquet",
+      "shape": [
+        2909,
+        6
+      ],
+      "columns": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "volume",
+        "log_ret"
+      ],
+      "index_dtype": "datetime64[ns, UTC]",
+      "index_min": "2015-01-02 00:00:00+00:00",
+      "index_max": "2026-07-29 00:00:00+00:00"
+    },
+    "tnx10y_1d.parquet": {
+      "path": "data_collection/data/raw/ohlcv/tnx10y_1d.parquet",
+      "shape": [
+        2906,
+        6
+      ],
+      "columns": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "volume",
+        "log_ret"
+      ],
+      "index_dtype": "datetime64[ns, UTC]",
+      "index_min": "2015-01-02 00:00:00+00:00",
+      "index_max": "2026-07-29 00:00:00+00:00"
+    },
+    "vix_1d.parquet": {
+      "path": "data_collection/data/raw/ohlcv/vix_1d.parquet",
+      "shape": [
+        2910,
+        6
+      ],
+      "columns": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "volume",
+        "log_ret"
+      ],
+      "index_dtype": "datetime64[ns, UTC]",
+      "index_min": "2015-01-02 00:00:00+00:00",
+      "index_max": "2026-07-29 00:00:00+00:00"
+    },
+    "vxn_1d.parquet": {
+      "path": "data_collection/data/raw/ohlcv/vxn_1d.parquet",
+      "shape": [
+        2909,
+        6
+      ],
+      "columns": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "volume",
+        "log_ret"
+      ],
+      "index_dtype": "datetime64[ns, UTC]",
+      "index_min": "2015-01-02 00:00:00+00:00",
+      "index_max": "2026-07-29 00:00:00+00:00"
+    },
+    "btc_deribit_dvol.parquet": {
+      "path": "data_collection/data/raw/options/btc_deribit_dvol.parquet",
+      "shape": [
+        1000,
+        5
+      ],
+      "columns": [
+        "timestamp",
+        "open",
+        "high",
+        "low",
+        "dvol_close"
+      ],
+      "index_dtype": "int64",
+      "index_min": "0",
+      "index_max": "999"
+    },
+    "btc_deribit_options_chain.parquet": {
+      "path": "data_collection/data/raw/options/btc_deribit_options_chain.parquet",
+      "shape": [
+        844,
+        5
+      ],
+      "columns": [
+        "instrument_name",
+        "mark_iv",
+        "mark_price",
+        "underlying_price",
+        "timestamp"
+      ],
+      "index_dtype": "int64",
+      "index_min": "0",
+      "index_max": "843"
+    },
+    "spx_vix_term_structure.parquet": {
+      "path": "data_collection/data/raw/options/spx_vix_term_structure.parquet",
+      "shape": [
+        3908,
+        5
+      ],
+      "columns": [
+        "VIX",
+        "VIX9D",
+        "VX3M",
+        "term_slope",
+        "contango"
+      ],
+      "index_dtype": "datetime64[ns, UTC]",
+      "index_min": "2011-01-03 00:00:00+00:00",
+      "index_max": "2026-07-29 00:00:00+00:00"
+    },
+    "btc_rv_daily.parquet": {
+      "path": "data_collection/data/raw/realized_vol/btc_rv_daily.parquet",
+      "shape": [
+        2767,
+        12
+      ],
+      "columns": [
+        "RV",
+        "BV",
+        "J_t",
+        "C_t",
+        "PK",
+        "GK",
+        "log_RV",
+        "RV_d",
+        "RV_w",
+        "RV_m",
+        "RV_ann",
+        "vol_ann"
+      ],
+      "index_dtype": "datetime64[ns]",
+      "index_min": "2019-01-01 00:00:00",
+      "index_max": "2026-07-29 00:00:00"
+    },
+    "eth_rv_daily.parquet": {
+      "path": "data_collection/data/raw/realized_vol/eth_rv_daily.parquet",
+      "shape": [
+        2767,
+        12
+      ],
+      "columns": [
+        "RV",
+        "BV",
+        "J_t",
+        "C_t",
+        "PK",
+        "GK",
+        "log_RV",
+        "RV_d",
+        "RV_w",
+        "RV_m",
+        "RV_ann",
+        "vol_ann"
+      ],
+      "index_dtype": "datetime64[ns]",
+      "index_min": "2019-01-01 00:00:00",
+      "index_max": "2026-07-29 00:00:00"
+    },
+    "nifty_rv_daily.parquet": {
+      "path": "data_collection/data/raw/realized_vol/nifty_rv_daily.parquet",
+      "shape": [
+        2848,
+        10
+      ],
+      "columns": [
+        "PK",
+        "GK",
+        "log_ret",
+        "RV",
+        "log_RV",
+        "RV_d",
+        "RV_w",
+        "RV_m",
+        "RV_ann",
+        "vol_ann"
+      ],
+      "index_dtype": "datetime64[ns, UTC]",
+      "index_min": "2015-01-02 00:00:00+00:00",
+      "index_max": "2026-07-29 00:00:00+00:00"
+    },
+    "spx_rv_daily.parquet": {
+      "path": "data_collection/data/raw/realized_vol/spx_rv_daily.parquet",
+      "shape": [
+        2909,
+        10
+      ],
+      "columns": [
+        "PK",
+        "GK",
+        "log_ret",
+        "RV",
+        "log_RV",
+        "RV_d",
+        "RV_w",
+        "RV_m",
+        "RV_ann",
+        "vol_ann"
+      ],
+      "index_dtype": "datetime64[ns, UTC]",
+      "index_min": "2015-01-02 00:00:00+00:00",
+      "index_max": "2026-07-29 00:00:00+00:00"
+    },
+    "extended_news_headlines.parquet": {
+      "path": "data_collection/data/raw/sentiment/extended_news_headlines.parquet",
+      "shape": [
+        2428,
+        9
+      ],
+      "columns": [
+        "date",
+        "asset",
+        "source",
+        "title",
+        "description",
+        "url",
+        "av_sentiment_score",
+        "av_sentiment_label",
+        "text_finbert"
+      ],
+      "index_dtype": "int64",
+      "index_min": "0",
+      "index_max": "2427"
+    },
+    "gdelt_daily.parquet": {
+      "path": "data_collection/data/raw/sentiment/gdelt_daily.parquet",
+      "shape": [
+        0,
+        0
+      ],
+      "columns": [],
+      "index_dtype": "int64",
+      "index_min": "nan",
+      "index_max": "nan"
+    },
+    "google_trends_weekly.parquet": {
+      "path": "data_collection/data/raw/sentiment/google_trends_weekly.parquet",
+      "shape": [
+        0,
+        0
+      ],
+      "columns": [],
+      "index_dtype": "int64",
+      "index_min": "nan",
+      "index_max": "nan"
+    },
+    "newsapi_headlines.parquet": {
+      "path": "data_collection/data/raw/sentiment/newsapi_headlines.parquet",
+      "shape": [
+        198,
+        7
+      ],
+      "columns": [
+        "asset",
+        "published_at",
+        "source_name",
+        "title",
+        "description",
+        "url",
+        "author"
+      ],
+      "index_dtype": "int64",
+      "index_min": "0",
+      "index_max": "197"
+    }
+  },
+  "feature_matrix": {
+    "btc": {
+      "shape": [
+        2744,
+        16
+      ],
+      "columns": [
+        "log_RV",
+        "RV_d",
+        "RV_w",
+        "RV_m",
+        "Target_RV",
+        "vpin_lag1",
+        "obi_sq_lag1",
+        "illiq_lag1",
+        "roll_spread_lag1",
+        "FinBERT_score_lag1",
+        "sent_surprise_lag1",
+        "credit_spread_lag1",
+        "term_slope_lag1",
+        "crypto_fg_lag1",
+        "gmsi",
+        "regime"
+      ],
+      "start": "2019-01-23 00:00:00+00:00",
+      "end": "2026-07-28 00:00:00+00:00",
+      "nan_counts": {
+        "FinBERT_score_lag1": 1,
+        "sent_surprise_lag1": 2,
+        "credit_spread_lag1": 1644,
+        "term_slope_lag1": 69,
+        "crypto_fg_lag1": 74,
+        "gmsi": 1644
+      },
+      "dtypes": {
+        "log_RV": "float64",
+        "RV_d": "float64",
+        "RV_w": "float64",
+        "RV_m": "float64",
+        "Target_RV": "float64",
+        "vpin_lag1": "float64",
+        "obi_sq_lag1": "float64",
+        "illiq_lag1": "float64",
+        "roll_spread_lag1": "float64",
+        "FinBERT_score_lag1": "float32",
+        "sent_surprise_lag1": "float64",
+        "credit_spread_lag1": "float64",
+        "term_slope_lag1": "float64",
+        "crypto_fg_lag1": "float64",
+        "gmsi": "float64",
+        "regime": "category"
+      }
+    },
+    "spx": {
+      "shape": [
+        2862,
+        13
+      ],
+      "columns": [
+        "log_RV",
+        "RV_d",
+        "RV_w",
+        "RV_m",
+        "Target_RV",
+        "illiq_lag1",
+        "roll_spread_lag1",
+        "FinBERT_score_lag1",
+        "sent_surprise_lag1",
+        "credit_spread_lag1",
+        "term_slope_lag1",
+        "gmsi",
+        "regime"
+      ],
+      "start": "2015-02-05 00:00:00+00:00",
+      "end": "2026-07-28 00:00:00+00:00",
+      "nan_counts": {
+        "FinBERT_score_lag1": 1,
+        "sent_surprise_lag1": 2,
+        "credit_spread_lag1": 2107,
+        "term_slope_lag1": 46,
+        "gmsi": 2107
+      },
+      "dtypes": {
+        "log_RV": "float64",
+        "RV_d": "float64",
+        "RV_w": "float64",
+        "RV_m": "float64",
+        "Target_RV": "float64",
+        "illiq_lag1": "float64",
+        "roll_spread_lag1": "float64",
+        "FinBERT_score_lag1": "float32",
+        "sent_surprise_lag1": "float64",
+        "credit_spread_lag1": "float64",
+        "term_slope_lag1": "float64",
+        "gmsi": "float64",
+        "regime": "category"
+      }
+    },
+    "nifty": {
+      "shape": [
+        2755,
+        13
+      ],
+      "columns": [
+        "log_RV",
+        "RV_d",
+        "RV_w",
+        "RV_m",
+        "Target_RV",
+        "illiq_lag1",
+        "roll_spread_lag1",
+        "FinBERT_score_lag1",
+        "sent_surprise_lag1",
+        "credit_spread_lag1",
+        "term_slope_lag1",
+        "gmsi",
+        "regime"
+      ],
+      "start": "2015-02-05 00:00:00+00:00",
+      "end": "2026-07-28 00:00:00+00:00",
+      "nan_counts": {
+        "FinBERT_score_lag1": 1,
+        "sent_surprise_lag1": 2,
+        "credit_spread_lag1": 2036,
+        "term_slope_lag1": 47,
+        "gmsi": 2036
+      },
+      "dtypes": {
+        "log_RV": "float64",
+        "RV_d": "float64",
+        "RV_w": "float64",
+        "RV_m": "float64",
+        "Target_RV": "float64",
+        "illiq_lag1": "float64",
+        "roll_spread_lag1": "float64",
+        "FinBERT_score_lag1": "float32",
+        "sent_surprise_lag1": "float64",
+        "credit_spread_lag1": "float64",
+        "term_slope_lag1": "float64",
+        "gmsi": "float64",
+        "regime": "category"
+      }
+    }
+  },
+  "alignment": {
+    "btc": {
+      "max_abs(RV_d - log_RV.shift(1))": 0.0,
+      "max_abs(RV_d - log_RV)": 4.3287121682665495,
+      "max_abs(Target_RV - log_RV.shift(-1))": 0.0,
+      "corr(Target_RV, log_RV)": 0.7029226869442696,
+      "corr(Target_RV, RV_d)": 0.54943196024896,
+      "calendar_gaps_days_value_counts": {
+        "1.0": 2743
+      },
+      "regime_counts": {
+        "high": 1933,
+        "low": 447,
+        "medium": 364
+      },
+      "regime_first_date": {
+        "high": "2019-01-23 00:00:00+00:00",
+        "medium": "2024-01-26 00:00:00+00:00",
+        "low": "2024-11-08 00:00:00+00:00"
+      },
+      "exo_first_valid": {
+        "vpin_lag1": "2019-01-23 00:00:00+00:00",
+        "obi_sq_lag1": "2019-01-23 00:00:00+00:00",
+        "illiq_lag1": "2019-01-23 00:00:00+00:00",
+        "FinBERT_score_lag1": "2019-01-24 00:00:00+00:00",
+        "sent_surprise_lag1": "2019-01-25 00:00:00+00:00",
+        "credit_spread_lag1": "2023-05-17 00:00:00+00:00",
+        "term_slope_lag1": "2019-01-23 00:00:00+00:00",
+        "crypto_fg_lag1": "2019-01-23 00:00:00+00:00"
+      },
+      "exo_frac_zero": {
+        "vpin_lag1": 0.0,
+        "obi_sq_lag1": 0.0,
+        "illiq_lag1": 1.0,
+        "FinBERT_score_lag1": 0.9850583090379009,
+        "sent_surprise_lag1": 0.9846938775510204,
+        "credit_spread_lag1": 0.0,
+        "term_slope_lag1": 0.0047376093294460644,
+        "crypto_fg_lag1": 0.0
+      }
+    },
+    "spx": {
+      "max_abs(RV_d - log_RV.shift(1))": 0.002699430962779914,
+      "max_abs(RV_d - log_RV)": 17.137962590866753,
+      "max_abs(Target_RV - log_RV.shift(-1))": 0.0,
+      "corr(Target_RV, log_RV)": 0.1177864894044102,
+      "corr(Target_RV, RV_d)": 0.1462878867637442,
+      "calendar_gaps_days_value_counts": {
+        "1.0": 2238,
+        "3.0": 514,
+        "4.0": 80,
+        "2.0": 28,
+        "35.0": 1
+      },
+      "regime_counts": {
+        "high": 2311,
+        "low": 306,
+        "medium": 245
+      },
+      "regime_first_date": {
+        "high": "2015-02-05 00:00:00+00:00",
+        "medium": "2024-03-13 00:00:00+00:00",
+        "low": "2024-11-08 00:00:00+00:00"
+      },
+      "exo_first_valid": {
+        "illiq_lag1": "2015-02-05 00:00:00+00:00",
+        "FinBERT_score_lag1": "2015-02-06 00:00:00+00:00",
+        "sent_surprise_lag1": "2015-02-09 00:00:00+00:00",
+        "credit_spread_lag1": "2023-05-17 00:00:00+00:00",
+        "term_slope_lag1": "2015-02-05 00:00:00+00:00"
+      },
+      "exo_frac_zero": {
+        "illiq_lag1": 1.0,
+        "FinBERT_score_lag1": 0.9234800838574424,
+        "sent_surprise_lag1": 0.7959468902865129,
+        "credit_spread_lag1": 0.0,
+        "term_slope_lag1": 0.002445842068483578
+      }
+    },
+    "nifty": {
+      "max_abs(RV_d - log_RV.shift(1))": 3.1003710764524186,
+      "max_abs(RV_d - log_RV)": 15.874919163795528,
+      "max_abs(Target_RV - log_RV.shift(-1))": 0.0,
+      "corr(Target_RV, log_RV)": 0.07274625552844105,
+      "corr(Target_RV, RV_d)": 0.06769605849992376,
+      "calendar_gaps_days_value_counts": {
+        "1.0": 2084,
+        "3.0": 513,
+        "2.0": 82,
+        "4.0": 66,
+        "5.0": 6,
+        "36.0": 1,
+        "39.0": 1,
+        "35.0": 1
+      },
+      "regime_counts": {
+        "high": 2228,
+        "low": 295,
+        "medium": 232
+      },
+      "regime_first_date": {
+        "high": "2015-02-05 00:00:00+00:00",
+        "medium": "2024-03-13 00:00:00+00:00",
+        "low": "2024-11-12 00:00:00+00:00"
+      },
+      "exo_first_valid": {
+        "illiq_lag1": "2015-02-05 00:00:00+00:00",
+        "FinBERT_score_lag1": "2015-02-06 00:00:00+00:00",
+        "sent_surprise_lag1": "2015-02-09 00:00:00+00:00",
+        "credit_spread_lag1": "2023-05-17 00:00:00+00:00",
+        "term_slope_lag1": "2015-02-05 00:00:00+00:00"
+      },
+      "exo_frac_zero": {
+        "illiq_lag1": 1.0,
+        "FinBERT_score_lag1": 0.923049001814882,
+        "sent_surprise_lag1": 0.8504537205081669,
+        "credit_spread_lag1": 0.0,
+        "term_slope_lag1": 0.0029038112522686023
+      }
+    }
+  },
+  "npy": {
+    "btc": {
+      "har": [
+        2492
+      ],
+      "harss": [
+        1119
+      ],
+      "actuals": [
+        1119
+      ],
+      "actuals_equal_Target_RV_tail": true,
+      "neural_forecasts_present": false
+    },
+    "spx": {
+      "har": [
+        2610
+      ],
+      "harss": [
+        751
+      ],
+      "actuals": [
+        751
+      ],
+      "actuals_equal_Target_RV_tail": true,
+      "neural_forecasts_present": false
+    },
+    "nifty": {
+      "har": [
+        2503
+      ],
+      "harss": [
+        716
+      ],
+      "actuals": [
+        716
+      ],
+      "actuals_equal_Target_RV_tail": true,
+      "neural_forecasts_present": false
+    }
+  },
+  "news": {
+    "n_headlines": 2428,
+    "by_asset_year": {
+      "SPX|2014": 2,
+      "SPX|2015": 3,
+      "SPX|2017": 2,
+      "SPX|2018": 2,
+      "SPX|2019": 3,
+      "SPX|2020": 4,
+      "SPX|2021": 8,
+      "SPX|2022": 21,
+      "NIFTY|2023": 19,
+      "SPX|2023": 16,
+      "NIFTY|2024": 24,
+      "SPX|2024": 14,
+      "NIFTY|2025": 296,
+      "SPX|2025": 109,
+      "BTC|2026": 785,
+      "NIFTY|2026": 661,
+      "SPX|2026": 459
+    },
+    "by_asset_source": {
+      "BTC|AlphaVantage": 785,
+      "NIFTY|AlphaVantage": 1000,
+      "SPX|AlphaVantage": 543,
+      "SPX|Finnhub": 100
+    },
+    "sentiment_daily_btc": {
+      "rows": 43,
+      "start": "2026-06-18 00:00:00+00:00",
+      "end": "2026-07-30 00:00:00+00:00",
+      "nonzero_days": 43
+    },
+    "sentiment_daily_spx": {
+      "rows": 4497,
+      "start": "2014-04-08 00:00:00+00:00",
+      "end": "2026-07-30 00:00:00+00:00",
+      "nonzero_days": 278
+    },
+    "sentiment_daily_nifty": {
+      "rows": 1123,
+      "start": "2023-07-03 00:00:00+00:00",
+      "end": "2026-07-29 00:00:00+00:00",
+      "nonzero_days": 290
+    }
+  }
+}

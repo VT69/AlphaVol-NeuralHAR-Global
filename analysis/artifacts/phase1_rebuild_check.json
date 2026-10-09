@@ -1,0 +1,170 @@
+{
+  "btc": {
+    "loader_output_shape": [
+      2745,
+      50
+    ],
+    "rebuilt_shape": [
+      2744,
+      16
+    ],
+    "committed_shape": [
+      2744,
+      16
+    ],
+    "same_columns": true,
+    "same_index": true,
+    "max_abs_numeric_diff": 0.0,
+    "regime_equal": true,
+    "HAR_design_shape": [
+      2744,
+      4
+    ],
+    "HARS_design_shape": [
+      2744,
+      12
+    ],
+    "HARS_rows_with_all_exo_nonnull": 1095,
+    "HAR_oos_forecasts": 2492,
+    "neural_exo_cols": [
+      "vpin_lag1",
+      "obi_sq_lag1",
+      "illiq_lag1",
+      "FinBERT_score_lag1",
+      "sent_surprise_lag1",
+      "credit_spread_lag1",
+      "term_slope_lag1",
+      "crypto_fg_lag1"
+    ],
+    "neural_split_train_val_test": [
+      2195,
+      274,
+      275
+    ],
+    "neural_test_start": "2025-10-27 00:00:00+00:00",
+    "neural_tensor_shapes": {
+      "X_har": [
+        2744,
+        3
+      ],
+      "X_exo": [
+        2744,
+        8
+      ],
+      "y": [
+        2744,
+        1
+      ]
+    }
+  },
+  "spx": {
+    "loader_output_shape": [
+      2863,
+      45
+    ],
+    "rebuilt_shape": [
+      2862,
+      13
+    ],
+    "committed_shape": [
+      2862,
+      13
+    ],
+    "same_columns": true,
+    "same_index": true,
+    "max_abs_numeric_diff": 0.0,
+    "regime_equal": true,
+    "HAR_design_shape": [
+      2862,
+      4
+    ],
+    "HARS_design_shape": [
+      2862,
+      9
+    ],
+    "HARS_rows_with_all_exo_nonnull": 755,
+    "HAR_oos_forecasts": 2610,
+    "neural_exo_cols": [
+      "illiq_lag1",
+      "FinBERT_score_lag1",
+      "sent_surprise_lag1",
+      "credit_spread_lag1",
+      "term_slope_lag1"
+    ],
+    "neural_split_train_val_test": [
+      2289,
+      286,
+      287
+    ],
+    "neural_test_start": "2025-06-05 00:00:00+00:00",
+    "neural_tensor_shapes": {
+      "X_har": [
+        2862,
+        3
+      ],
+      "X_exo": [
+        2862,
+        5
+      ],
+      "y": [
+        2862,
+        1
+      ]
+    }
+  },
+  "nifty": {
+    "loader_output_shape": [
+      2756,
+      40
+    ],
+    "rebuilt_shape": [
+      2755,
+      13
+    ],
+    "committed_shape": [
+      2755,
+      13
+    ],
+    "same_columns": true,
+    "same_index": true,
+    "max_abs_numeric_diff": 0.0,
+    "regime_equal": false,
+    "HAR_design_shape": [
+      2755,
+      4
+    ],
+    "HARS_design_shape": [
+      2755,
+      9
+    ],
+    "HARS_rows_with_all_exo_nonnull": 719,
+    "HAR_oos_forecasts": 2503,
+    "neural_exo_cols": [
+      "illiq_lag1",
+      "FinBERT_score_lag1",
+      "sent_surprise_lag1",
+      "credit_spread_lag1",
+      "term_slope_lag1"
+    ],
+    "neural_split_train_val_test": [
+      2204,
+      275,
+      276
+    ],
+    "neural_test_start": "2025-06-16 00:00:00+00:00",
+    "neural_tensor_shapes": {
+      "X_har": [
+        2755,
+        3
+      ],
+      "X_exo": [
+        2755,
+        5
+      ],
+      "y": [
+        2755,
+        1
+      ]
+    }
+  }
+}

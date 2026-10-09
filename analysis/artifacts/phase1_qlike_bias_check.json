@@ -1,0 +1,32 @@
+{
+  "btc": {
+    "window_N": 275,
+    "HAR_QLIKE_reproduced": 0.31840294870142066,
+    "HAR_QLIKE_paper_table3_mcs": 0.31840294870141944,
+    "HAR_smearing_bias_corrected_QLIKE": 0.3081109355745095,
+    "NeuralHAR_QLIKE_paper_table3_mcs": 0.28658503514621697,
+    "mean_bias_correction_log_units": 0.40793182905020436,
+    "full_oos_HAR_QLIKE": 0.5304577030672923,
+    "full_oos_HAR_bc_QLIKE": 0.4564324652815554
+  },
+  "spx": {
+    "window_N": 287,
+    "HAR_QLIKE_reproduced": 3.896580898088022,
+    "HAR_QLIKE_paper_table3_mcs": 3.8965808980880268,
+    "HAR_smearing_bias_corrected_QLIKE": 1.4551998411829614,
+    "NeuralHAR_QLIKE_paper_table3_mcs": 1.5669140022558876,
+    "mean_bias_correction_log_units": 1.7705923506543026,
+    "full_oos_HAR_QLIKE": 4.638613254636953,
+    "full_oos_HAR_bc_QLIKE": 1.5911105508541805
+  },
+  "nifty": {
+    "window_N": 276,
+    "HAR_QLIKE_reproduced": 2.3304588500528762,
+    "HAR_QLIKE_paper_table3_mcs": 2.3304588500528824,
+    "HAR_smearing_bias_corrected_QLIKE": 1.2239790770582064,
+    "NeuralHAR_QLIKE_paper_table3_mcs": 1.8698423491537381,
+    "mean_bias_correction_log_units": 1.5551709053465408,
+    "full_oos_HAR_QLIKE": 3.591819018080542,
+    "full_oos_HAR_bc_QLIKE": 1.4585272471537234
+  }
+}
