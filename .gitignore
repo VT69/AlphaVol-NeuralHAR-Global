@@ -21,3 +21,5 @@ data_collection/data/raw/ohlcv/btc_1h.parquet
 # OS artifacts
 .DS_Store
 Thumbs.db
+# Audit artifacts (machine-readable results read by the dashboard)
+!analysis/artifacts/*.json
