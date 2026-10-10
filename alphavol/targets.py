@@ -37,7 +37,8 @@ def daily_realized_variance(bars: pd.DataFrame, *, min_bars: int, flag_below: in
     return spanning the gap. A bar is assigned to the UTC day of its open time.
 
     Returns a DataFrame indexed by UTC day with columns ``variance`` (NaN when fewer than
-    ``min_bars`` bars), ``n_bars`` and ``incomplete`` (n_bars < flag_below).
+    ``min_bars`` bars), ``rq`` (realized quarticity), ``n_bars`` and ``incomplete``
+    (n_bars < flag_below).
     """
     _require_utc_index(bars, "5-minute bars")
     close = bars["close"].astype(float)
@@ -45,13 +46,15 @@ def daily_realized_variance(bars: pd.DataFrame, *, min_bars: int, flag_below: in
         raise ValueError(f"non-positive close prices: {int((close <= 0).sum())} bars")
     r = np.log(close).diff()
     day = bars.index.floor("D")
-    grouped = pd.DataFrame({"r2": r ** 2, "day": day}).groupby("day")
+    grouped = pd.DataFrame({"r2": r ** 2, "r4": r ** 4, "day": day}).groupby("day")
     out = pd.DataFrame({"variance": grouped["r2"].sum(min_count=1), "n_bars": grouped.size()})
+    # realized quarticity (Barndorff-Nielsen & Shephard 2002): (n/3)·Σ r⁴, used by HARQ (D35)
+    out["rq"] = grouped["r4"].sum(min_count=1) * out["n_bars"] / 3.0
     too_few = out["n_bars"] < min_bars
     if too_few.any():
         log.warning("%d day(s) with < %d bars set to NaN: %s", int(too_few.sum()), min_bars,
                     [str(d.date()) for d in out.index[too_few]][:10])
-    out.loc[too_few, "variance"] = np.nan
+    out.loc[too_few, ["variance", "rq"]] = np.nan
     out["incomplete"] = out["n_bars"] < flag_below
     if (out["n_bars"] > bars_per_day).any():
         raise ValueError("more bars than expected in a day: check bar frequency")

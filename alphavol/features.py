@@ -99,11 +99,15 @@ def daily_variance(asset: str, spec: AssetSpec, prices: pd.DataFrame) -> tuple[p
         rv = daily_realized_variance(prices, min_bars=int(spec.min_bars_per_day or 1),
                                      flag_below=int(spec.flag_bars_below or 0))
         variance = regularise_calendar(rv["variance"], spec.calendar)
-        diag = rv[["n_bars", "incomplete"]].reindex(variance.index)
+        diag = rv[["n_bars", "incomplete", "rq"]].reindex(variance.index)
+        last_close = prices["close"].groupby(prices.index.floor("D")).last().reindex(variance.index)
+        diag["ret"] = np.log(last_close).diff()
         return variance, diag
     if spec.variance == "garman_klass":
         gk = garman_klass(prices)
-        return regularise_calendar(gk, spec.calendar), pd.DataFrame(index=gk.index)
+        variance = regularise_calendar(gk, spec.calendar)
+        diag = pd.DataFrame({"ret": np.log(prices["close"].astype(float)).diff()}).reindex(variance.index)
+        return variance, diag
     raise ValueError(f"unknown variance type {spec.variance} for {asset}")
 
 

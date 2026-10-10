@@ -61,3 +61,12 @@ def test_garman_klass_invalid_rows_are_nan_not_floored():
     assert np.isnan(gk.iloc[1])          # high < low: invalid
     assert gk.iloc[2] > 0
     assert np.isnan(log_variance(gk).iloc[0])  # never log(0) -> -inf or a floor
+
+
+def test_realized_quarticity_hand_case():
+    import math
+    closes = [1.0, math.e, 1.0]                      # returns +1, -1 within one day
+    b = _bars(closes)
+    out = daily_realized_variance(b, min_bars=1, flag_below=1)
+    # r4 sum = 2, n_bars = 3 -> rq = 3/3 * 2 = 2
+    assert math.isclose(out["rq"].iloc[0], 2.0)

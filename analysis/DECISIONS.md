@@ -44,6 +44,8 @@ Every design decision is logged **before** it is acted on: date, options conside
 | D31 | 2026-10-10 | Claude | Holdout = full sealed raw + features; end date = last complete day at local run time | In effect |
 | D32 | 2026-10-10 | Claude | GDELT: daily capped relevance sample for text + uncapped daily volume; Alpha Vantage ineligible (quota) | In effect |
 | D33 | 2026-10-10 | Claude | Feasibility filter before D28 selection: estimated full-fetch requests ≤ 14 days of quota | In effect |
+| D34 | 2026-10-10 | Claude | Experiment harness: origin rule, refit schedules, train-only preprocessing, equal tuning budgets, seeds | In effect (final values fixed in PREREGISTRATION.md) |
+| D35 | 2026-10-10 | Claude | Dataset additions for baselines: daily close-to-close return (GARCH) and realized quarticity (BTC HARQ) | In effect |
 
 ---
 
@@ -192,3 +194,15 @@ Every design decision is logged **before** it is acted on: date, options conside
 * **Rule.** Before D28 selection, each source's full-history request count is estimated from the probe: Σ over months of ⌈(probe articles per day × days in month) / page size⌉ (GDELT: one request per day per asset, plus one volume request per month). A source is **eligible** only if the estimate is ≤ 14 × its daily request quota.
 * **Quotas** (CLI flags with these defaults; none verifiable from the sandbox): NYT 500/day (third-party summary); Guardian 500/day (assumed; overridable if the author's key allows more); GDELT has no daily quota (rate-limited only), so it is always eligible.
 * **Output.** The probe JSON records estimates, quotas and eligibility, so the filter's effect is auditable.
+
+### D34 — 2026-10-10 — Experiment harness design (implementation; exact values pre-registered in Step 6)
+* **Forecast origin.** At origin t (row t, forecasting the log variance of the next trading day), a model may be trained only on rows s < t. Their targets are realized by t, so no target after t is ever used.
+* **Refit schedule.** Linear/naive models are re-estimated every origin (expanding window). HAR-QLIKE and GARCH are re-estimated every 21 sessions (BTC: 30 days); GARCH's filter is updated daily with fixed parameters. GBM and neural models are **refit from scratch** every 63 sessions (BTC: 91 days) with a **fresh optimizer and schedule** (fixes audit T1). Between refits, forecasts use the latest features with frozen weights.
+* **Preprocessing.** Imputation (training mean) and standardization use statistics of the training rows of each fit only. Missing-indicator columns are kept as features.
+* **Tuning.** One Optuna TPE study (seeded) per asset × model family × loss, on the **initial training window only**, scored on its last 20 % (chronological inner validation). GBM and neural models get the **same trial budget**. Neural epoch counts come from early stopping on that inner validation and are then fixed. Hyperparameters are tuned on the all-features configuration and reused across feature ablations, so with-/without-sentiment variants are treated identically.
+* **Seeds.** Every neural configuration is run with ≥ 5 seeds. The seed-averaged forecast (mean log forecast) is used for tests, and the per-seed distribution is reported (R1).
+
+### D35 — 2026-10-10 — Dataset additions needed by pre-specified baselines
+* `ret`: daily close-to-close log return of day t (BTC: last 5-min close per UTC day; SPX/NIFTY: daily close), used by GARCH.
+* `rq` (BTC only): realized quarticity (n/3)·Σr⁴ from 5-min returns, used by HARQ (Bollerslev, Patton & Quaedvlieg 2016). Not available for SPX/NIFTY (daily bars only), so HARQ is BTC-only.
+Both are lag 0 (known at the close of t). Neither is a candidate feature for the sentiment models.
