@@ -29,3 +29,5 @@ Thumbs.db
 .pytest_cache/
 # Raw API response cache written by local fetchers (large; re-creatable)
 data/cache/
+!data/processed_v2/manifest.json
+!data/sealed/SEAL_INFO.json

@@ -1,0 +1,112 @@
+{
+  "assets": {
+    "btc": {
+      "features": {
+        "fear_greed": [
+          "fear_greed"
+        ],
+        "har": [
+          "RV_d",
+          "RV_w",
+          "RV_m"
+        ],
+        "macro": [
+          "term_slope"
+        ],
+        "microstructure": [
+          "ofi_abs",
+          "vpin",
+          "amihud",
+          "roll"
+        ]
+      },
+      "file": "data/processed_v2/btc_dataset.parquet",
+      "first_date": "2019-01-25",
+      "last_date": "2026-07-27",
+      "last_target_date": "2026-07-28",
+      "notes": [
+        "rows dropped for missing HAR/target: 25"
+      ],
+      "pending_omitted": [
+        "macro.credit_spread",
+        "sentiment.file"
+      ],
+      "provenance": {
+        "fear_greed": "macro/crypto_fear_greed.parquet",
+        "fred": "macro/fred_series.parquet",
+        "prices": "btc_5min"
+      },
+      "rows": 2741,
+      "sha256": "e35558784cdae9754c75093354dbbf2297982bc87932eb5a3eefc885645dcdf5"
+    },
+    "nifty": {
+      "features": {
+        "har": [
+          "RV_d",
+          "RV_w",
+          "RV_m"
+        ],
+        "macro": [
+          "term_slope"
+        ]
+      },
+      "file": "data/processed_v2/nifty_dataset.parquet",
+      "first_date": "2015-01-28",
+      "last_date": "2026-07-27",
+      "last_target_date": "2026-07-28",
+      "notes": [
+        "rows dropped for missing HAR/target: 18"
+      ],
+      "pending_omitted": [
+        "implied_vol.india_vix",
+        "macro.credit_spread",
+        "sentiment.file"
+      ],
+      "provenance": {
+        "fred": "macro/fred_series.parquet",
+        "prices": "nifty_1d"
+      },
+      "rows": 2829,
+      "sha256": "4bcf444d29a5911aafe11ef1b07f0544dc2d9737f49b99e91bc42998afd647c6"
+    },
+    "spx": {
+      "features": {
+        "har": [
+          "RV_d",
+          "RV_w",
+          "RV_m"
+        ],
+        "implied_vol": [
+          "vix"
+        ],
+        "macro": [
+          "term_slope"
+        ]
+      },
+      "file": "data/processed_v2/spx_dataset.parquet",
+      "first_date": "2015-01-28",
+      "last_date": "2026-07-27",
+      "last_target_date": "2026-07-28",
+      "notes": [
+        "rows dropped for missing HAR/target: 18"
+      ],
+      "pending_omitted": [
+        "macro.credit_spread",
+        "sentiment.file"
+      ],
+      "provenance": {
+        "fred": "macro/fred_series.parquet",
+        "prices": "spx_1d"
+      },
+      "rows": 2890,
+      "sha256": "0958ddbe7a93a4cc38ecf46c51adf212d7f856ac0e90ecac97a2257d36bc5963"
+    }
+  },
+  "dev_end": "2026-07-28",
+  "git_commit": "e43e232e591f0dbe37ae55ce226e25322c21500e",
+  "pending_requested": [
+    "macro.credit_spread",
+    "sentiment",
+    "implied_vol.india_vix"
+  ]
+}
