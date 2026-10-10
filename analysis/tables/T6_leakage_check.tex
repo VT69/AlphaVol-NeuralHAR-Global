@@ -1,0 +1,32 @@
+\begin{table}[htbp]
+\centering
+\caption{Leakage and integrity checks per asset.}
+\label{tab:t6_leakage_check}
+\begin{tabular}{llrrrl}
+\toprule
+Asset & Check & ID & Content hash & Near-dup & Result \\
+\midrule
+BTC & overlap train-val & 0 & 0 & 0 & PASS \\
+BTC & overlap train-test & 0 & 0 & 0 & PASS \\
+BTC & overlap val-test & 0 & 0 & 0 & PASS \\
+BTC & chronological split order & -- & -- & -- & PASS \\
+BTC & Target\_RV = next raw trading day & 0 & -- & -- & PASS \\
+BTC & feature-target abs(Spearman) > 0.95 & 0 & -- & -- & PASS \\
+BTC & regime terciles use full sample (look-ahead) & -- & -- & -- & FAIL (data\_loader.py:203) \\
+SPX & overlap train-val & 0 & 0 & 0 & PASS \\
+SPX & overlap train-test & 0 & 0 & 0 & PASS \\
+SPX & overlap val-test & 0 & 0 & 0 & PASS \\
+SPX & chronological split order & -- & -- & -- & PASS \\
+SPX & Target\_RV = next raw trading day & 1 & -- & -- & FAIL \\
+SPX & feature-target abs(Spearman) > 0.95 & 0 & -- & -- & PASS \\
+SPX & regime terciles use full sample (look-ahead) & -- & -- & -- & FAIL (data\_loader.py:203) \\
+NIFTY & overlap train-val & 0 & 0 & 0 & PASS \\
+NIFTY & overlap train-test & 0 & 0 & 0 & PASS \\
+NIFTY & overlap val-test & 0 & 0 & 0 & PASS \\
+NIFTY & chronological split order & -- & -- & -- & PASS \\
+NIFTY & Target\_RV = next raw trading day & 3 & -- & -- & FAIL \\
+NIFTY & feature-target abs(Spearman) > 0.95 & 0 & -- & -- & PASS \\
+NIFTY & regime terciles use full sample (look-ahead) & -- & -- & -- & FAIL (data\_loader.py:203) \\
+\bottomrule
+\end{tabular}
+\end{table}

@@ -1,0 +1,23 @@
+Asset,Feature,Null%,FirstValid,"Corr(missing,time)",Verdict
+BTC,FinBERT_score_lag1,0.03644314868804665,2019-01-24,-0.0330589802453643,no time dependence detected
+BTC,sent_surprise_lag1,0.0728862973760933,2019-01-25,-0.046743935304691266,no time dependence detected
+BTC,credit_spread_lag1,59.91253644314869,2023-05-17,-0.7775833577296689,structural / time-dependent (not MCAR): missing as a contiguous block in time
+BTC,term_slope_lag1,2.5145772594752187,2019-01-23,0.2711833289732585,structural / time-dependent (not MCAR): missing as a contiguous block in time
+BTC,crypto_fg_lag1,2.696793002915452,2019-01-23,0.2789668960981107,time-dependent (not MCAR)
+BTC,gmsi,59.91253644314869,2023-05-16,-0.7765507105082485,structural / time-dependent (not MCAR): missing as a contiguous block in time
+BTC,FinBERT_score_lag1 == 0 (zero-filled),95.15151515151516,,,disguised missingness: train/val/test = 100.0%/100.0%/85.5%
+BTC,sent_surprise_lag1 == 0 (zero-filled),95.15151515151516,,,disguised missingness: train/val/test = 100.0%/100.0%/85.5%
+SPX,FinBERT_score_lag1,0.034940600978336823,2015-02-06,-0.03237054067508951,no time dependence detected
+SPX,sent_surprise_lag1,0.06988120195667365,2015-02-09,-0.04577085644542595,no time dependence detected
+SPX,credit_spread_lag1,73.61984626135569,2023-05-17,-0.7299738169776424,structural / time-dependent (not MCAR): missing as a contiguous block in time
+SPX,term_slope_lag1,1.6072676450034942,2015-02-05,0.21781423818787699,structural / time-dependent (not MCAR): missing as a contiguous block in time
+SPX,gmsi,73.61984626135569,2023-05-16,-0.7292492772089301,structural / time-dependent (not MCAR): missing as a contiguous block in time
+SPX,FinBERT_score_lag1 == 0 (zero-filled),80.05874436843334,,,disguised missingness: train/val/test = 97.7%/95.1%/47.4%
+SPX,sent_surprise_lag1 == 0 (zero-filled),60.60975895390753,,,disguised missingness: train/val/test = 87.9%/70.6%/23.3%
+NIFTY,FinBERT_score_lag1,0.03629764065335753,2015-02-06,-0.03299294026609377,no time dependence detected
+NIFTY,sent_surprise_lag1,0.07259528130671505,2015-02-09,-0.04665059167330797,no time dependence detected
+NIFTY,credit_spread_lag1,73.90199637023593,2023-05-17,-0.7255441365237288,structural / time-dependent (not MCAR): missing as a contiguous block in time
+NIFTY,term_slope_lag1,1.7059891107078042,2015-02-05,0.22429123989906855,structural / time-dependent (not MCAR): missing as a contiguous block in time
+NIFTY,gmsi,73.90199637023593,2023-05-16,-0.7247969232008413,structural / time-dependent (not MCAR): missing as a contiguous block in time
+NIFTY,FinBERT_score_lag1 == 0 (zero-filled),76.08846693080892,,,disguised missingness: train/val/test = 99.3%/89.1%/39.9%
+NIFTY,sent_surprise_lag1 == 0 (zero-filled),57.927512320394825,,,disguised missingness: train/val/test = 96.8%/53.1%/23.9%

@@ -1,0 +1,26 @@
+\begin{table}[htbp]
+\centering
+\caption{Categorical columns: counts, mode and entropy.}
+\label{tab:t3_categorical_stats}
+\begin{tabular}{llrrrlrrrrrrrrrrrrr}
+\toprule
+Asset & Split & n\_high & n\_medium & n\_low & Mode & Entropy (bits) & Rare<1\% & n\_NIFTY & n\_BTC & n\_SPX & n\_AlphaVantage & n\_Finnhub & n\_Neutral & n\_Somewhat-Bullish & n\_Bullish & n\_Somewhat-Bearish & n\_ & n\_Bearish \\
+\midrule
+BTC & train & 1920 & 221 & 54 & high & 0.6339 & 0 & -- & -- & -- & -- & -- & -- & -- & -- & -- & -- & -- \\
+BTC & val & 13 & 108 & 153 & low & 1.207 & 0 & -- & -- & -- & -- & -- & -- & -- & -- & -- & -- & -- \\
+BTC & test & -- & 35 & 240 & low & 0.5499 & 0 & -- & -- & -- & -- & -- & -- & -- & -- & -- & -- & -- \\
+BTC & combined & 1933 & 364 & 447 & high & 1.169 & 0 & -- & -- & -- & -- & -- & -- & -- & -- & -- & -- & -- \\
+SPX & train & 2269 & 20 & -- & high & 0.0723 & 1 & -- & -- & -- & -- & -- & -- & -- & -- & -- & -- & -- \\
+SPX & val & 42 & 187 & 57 & medium & 1.271 & 0 & -- & -- & -- & -- & -- & -- & -- & -- & -- & -- & -- \\
+SPX & test & -- & 38 & 249 & low & 0.564 & 0 & -- & -- & -- & -- & -- & -- & -- & -- & -- & -- & -- \\
+SPX & combined & 2311 & 245 & 306 & high & 0.8975 & 0 & -- & -- & -- & -- & -- & -- & -- & -- & -- & -- & -- \\
+NIFTY & train & 2193 & 11 & -- & high & 0.04535 & 1 & -- & -- & -- & -- & -- & -- & -- & -- & -- & -- & -- \\
+NIFTY & val & 35 & 188 & 52 & medium & 1.208 & 0 & -- & -- & -- & -- & -- & -- & -- & -- & -- & -- & -- \\
+NIFTY & test & -- & 33 & 243 & low & 0.5281 & 0 & -- & -- & -- & -- & -- & -- & -- & -- & -- & -- & -- \\
+NIFTY & combined & 2228 & 232 & 295 & high & 0.8935 & 0 & -- & -- & -- & -- & -- & -- & -- & -- & -- & -- & -- \\
+news & asset & -- & -- & -- & NIFTY & 1.561 & 0 & 1000 & 785 & 643 & -- & -- & -- & -- & -- & -- & -- & -- \\
+news & source & -- & -- & -- & AlphaVantage & 0.2477 & 0 & -- & -- & -- & 2328 & 100 & -- & -- & -- & -- & -- & -- \\
+news & av\_sentiment\_label & -- & -- & -- & Neutral & 2.029 & 0 & -- & -- & -- & -- & -- & 1148 & 616 & 278 & 197 & 100 & 89 \\
+\bottomrule
+\end{tabular}
+\end{table}

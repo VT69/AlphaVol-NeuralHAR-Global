@@ -1,0 +1,20 @@
+\begin{table}[htbp]
+\centering
+\caption{Target and regime distribution per chronological split.}
+\label{tab:t4_split_distribution}
+\begin{tabular}{llrllrrrrrrrr}
+\toprule
+Asset & Split & N & From & To & Target mean & Target std & Target P5 & Target P95 & FinBERT==0 \% & regime\_high & regime\_medium & regime\_low \\
+\midrule
+BTC & train & 2195 & 2019-01-23 & 2025-01-25 & -7.274 & 1.074 & -8.997 & -5.449 & 100 & 1920 & 221 & 54 \\
+BTC & val & 274 & 2025-01-26 & 2025-10-26 & -8.022 & 0.9102 & -9.489 & -6.486 & 100 & 13 & 108 & 153 \\
+BTC & test & 275 & 2025-10-27 & 2026-07-28 & -7.752 & 0.8784 & -9.46 & -6.523 & 85.45 & -- & 35 & 240 \\
+SPX & train & 2289 & 2015-02-05 & 2024-04-12 & -11.02 & 2.548 & -15.78 & -7.621 & 97.68 & 2269 & 20 & -- \\
+SPX & val & 286 & 2024-04-15 & 2025-06-04 & -11.04 & 2.774 & -16.64 & -7.699 & 95.1 & 42 & 187 & 57 \\
+SPX & test & 287 & 2025-06-05 & 2026-07-28 & -11.35 & 2.74 & -16.2 & -8.318 & 47.39 & -- & 38 & 249 \\
+NIFTY & train & 2204 & 2015-02-05 & 2024-03-28 & -10.9 & 2.42 & -15.46 & -7.901 & 99.32 & 2193 & 11 & -- \\
+NIFTY & val & 275 & 2024-04-01 & 2025-06-13 & -11.41 & 2.692 & -16.32 & -8.23 & 89.09 & 35 & 188 & 52 \\
+NIFTY & test & 276 & 2025-06-16 & 2026-07-28 & -11.16 & 2.277 & -15.38 & -8.242 & 39.86 & -- & 33 & 243 \\
+\bottomrule
+\end{tabular}
+\end{table}

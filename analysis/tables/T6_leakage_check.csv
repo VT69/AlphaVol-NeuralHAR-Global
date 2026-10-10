@@ -1,0 +1,22 @@
+Asset,Check,ID,Content hash,Near-dup,Result
+BTC,overlap train-val,0.0,0.0,0.0,PASS
+BTC,overlap train-test,0.0,0.0,0.0,PASS
+BTC,overlap val-test,0.0,0.0,0.0,PASS
+BTC,chronological split order,,,,PASS
+BTC,Target_RV = next raw trading day,0.0,,,PASS
+BTC,feature-target abs(Spearman) > 0.95,0.0,,,PASS
+BTC,regime terciles use full sample (look-ahead),,,,FAIL (data_loader.py:203)
+SPX,overlap train-val,0.0,0.0,0.0,PASS
+SPX,overlap train-test,0.0,0.0,0.0,PASS
+SPX,overlap val-test,0.0,0.0,0.0,PASS
+SPX,chronological split order,,,,PASS
+SPX,Target_RV = next raw trading day,1.0,,,FAIL
+SPX,feature-target abs(Spearman) > 0.95,0.0,,,PASS
+SPX,regime terciles use full sample (look-ahead),,,,FAIL (data_loader.py:203)
+NIFTY,overlap train-val,0.0,0.0,0.0,PASS
+NIFTY,overlap train-test,0.0,0.0,0.0,PASS
+NIFTY,overlap val-test,0.0,0.0,0.0,PASS
+NIFTY,chronological split order,,,,PASS
+NIFTY,Target_RV = next raw trading day,3.0,,,FAIL
+NIFTY,feature-target abs(Spearman) > 0.95,0.0,,,PASS
+NIFTY,regime terciles use full sample (look-ahead),,,,FAIL (data_loader.py:203)

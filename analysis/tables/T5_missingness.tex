@@ -1,0 +1,33 @@
+\begin{table}[htbp]
+\centering
+\caption{Missingness by feature (true NaN and zero-filled), with mechanism diagnostics.}
+\label{tab:t5_missingness}
+\begin{tabular}{llrlrl}
+\toprule
+Asset & Feature & Null\% & FirstValid & Corr(missing,time) & Verdict \\
+\midrule
+BTC & FinBERT\_score\_lag1 & 0.03644 & 2019-01-24 & -0.03306 & no time dependence detected \\
+BTC & sent\_surprise\_lag1 & 0.07289 & 2019-01-25 & -0.04674 & no time dependence detected \\
+BTC & credit\_spread\_lag1 & 59.91 & 2023-05-17 & -0.7776 & structural / time-dependent (not MCAR): missing as a contiguous block in time \\
+BTC & term\_slope\_lag1 & 2.515 & 2019-01-23 & 0.2712 & structural / time-dependent (not MCAR): missing as a contiguous block in time \\
+BTC & crypto\_fg\_lag1 & 2.697 & 2019-01-23 & 0.279 & time-dependent (not MCAR) \\
+BTC & gmsi & 59.91 & 2023-05-16 & -0.7766 & structural / time-dependent (not MCAR): missing as a contiguous block in time \\
+BTC & FinBERT\_score\_lag1 == 0 (zero-filled) & 95.15 & -- & -- & disguised missingness: train/val/test = 100.0\%/100.0\%/85.5\% \\
+BTC & sent\_surprise\_lag1 == 0 (zero-filled) & 95.15 & -- & -- & disguised missingness: train/val/test = 100.0\%/100.0\%/85.5\% \\
+SPX & FinBERT\_score\_lag1 & 0.03494 & 2015-02-06 & -0.03237 & no time dependence detected \\
+SPX & sent\_surprise\_lag1 & 0.06988 & 2015-02-09 & -0.04577 & no time dependence detected \\
+SPX & credit\_spread\_lag1 & 73.62 & 2023-05-17 & -0.73 & structural / time-dependent (not MCAR): missing as a contiguous block in time \\
+SPX & term\_slope\_lag1 & 1.607 & 2015-02-05 & 0.2178 & structural / time-dependent (not MCAR): missing as a contiguous block in time \\
+SPX & gmsi & 73.62 & 2023-05-16 & -0.7292 & structural / time-dependent (not MCAR): missing as a contiguous block in time \\
+SPX & FinBERT\_score\_lag1 == 0 (zero-filled) & 80.06 & -- & -- & disguised missingness: train/val/test = 97.7\%/95.1\%/47.4\% \\
+SPX & sent\_surprise\_lag1 == 0 (zero-filled) & 60.61 & -- & -- & disguised missingness: train/val/test = 87.9\%/70.6\%/23.3\% \\
+NIFTY & FinBERT\_score\_lag1 & 0.0363 & 2015-02-06 & -0.03299 & no time dependence detected \\
+NIFTY & sent\_surprise\_lag1 & 0.0726 & 2015-02-09 & -0.04665 & no time dependence detected \\
+NIFTY & credit\_spread\_lag1 & 73.9 & 2023-05-17 & -0.7255 & structural / time-dependent (not MCAR): missing as a contiguous block in time \\
+NIFTY & term\_slope\_lag1 & 1.706 & 2015-02-05 & 0.2243 & structural / time-dependent (not MCAR): missing as a contiguous block in time \\
+NIFTY & gmsi & 73.9 & 2023-05-16 & -0.7248 & structural / time-dependent (not MCAR): missing as a contiguous block in time \\
+NIFTY & FinBERT\_score\_lag1 == 0 (zero-filled) & 76.09 & -- & -- & disguised missingness: train/val/test = 99.3\%/89.1\%/39.9\% \\
+NIFTY & sent\_surprise\_lag1 == 0 (zero-filled) & 57.93 & -- & -- & disguised missingness: train/val/test = 96.8\%/53.1\%/23.9\% \\
+\bottomrule
+\end{tabular}
+\end{table}

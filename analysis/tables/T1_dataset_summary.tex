@@ -1,0 +1,15 @@
+\begin{table}[htbp]
+\centering
+\caption{Modelling datasets: size, period and chronological splits.}
+\label{tab:t1_dataset_summary}
+\begin{tabular}{lrrllllrr}
+\toprule
+Dataset & Rows & Cols & Start & End & Train/Val/Test & Test start & Disk (KB) & Memory (KB) \\
+\midrule
+BTC feature matrix & 2744 & 16 & 2019-01-23 & 2026-07-28 & 2195/274/275 & 2025-10-27 & 224.4 & 335.1 \\
+SPX feature matrix & 2862 & 13 & 2015-02-05 & 2026-07-28 & 2289/286/287 & 2025-06-05 & 179.6 & 282.4 \\
+NIFTY feature matrix & 2755 & 13 & 2015-02-05 & 2026-07-28 & 2204/275/276 & 2025-06-16 & 173.5 & 271.9 \\
+News headlines (FinBERT input) & 2428 & 12 & -- & -- & 86/62/2280 & -- & 737.4 & 1753 \\
+\bottomrule
+\end{tabular}
+\end{table}
