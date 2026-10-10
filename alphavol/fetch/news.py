@@ -316,3 +316,40 @@ def assess_density(probe: pd.DataFrame, *, min_per_day: float = 1.0, max_year_ra
                     "year_ratio": ratio, "yearly_mean": {int(k): float(v) for k, v in ym.items()}}
             break                                     # earliest start = longest period
     return best or {"accepted": False, "start_year": None, "end_year": int(end_year)}
+
+
+def select_sources(probe: pd.DataFrame, *, assets: tuple[str, ...], end_year: int,
+                   min_per_day: float = 1.0, max_year_ratio: float = 4.0) -> dict:
+    """D28: choose the subset of sources with the longest common D25-accepted period.
+
+    ``probe`` columns: source, asset, window_start, articles_per_trading_day (one row per probe
+    window). Densities of a subset are summed across its sources. Returns every subset's outcome
+    and the choice; ``choice`` is None if no subset is admissible for all assets.
+    """
+    from itertools import combinations
+
+    sources = sorted(probe["source"].unique())
+    outcomes = []
+    for k in range(1, len(sources) + 1):
+        for subset in combinations(sources, k):
+            per_asset = {}
+            for a in assets:
+                sub = probe[(probe["asset"] == a) & probe["source"].isin(subset)]
+                if sub.empty:
+                    per_asset[a] = {"accepted": False, "start_year": None}
+                    continue
+                summed = sub.groupby("window_start", as_index=False)["articles_per_trading_day"].sum()
+                per_asset[a] = assess_density(summed, min_per_day=min_per_day, max_year_ratio=max_year_ratio,
+                                              end_year=end_year)
+            ok = all(v["accepted"] for v in per_asset.values())
+            start = max(v["start_year"] for v in per_asset.values()) if ok else None
+            min_density = (min(min(v["yearly_mean"].values()) for v in per_asset.values()) if ok else None)
+            outcomes.append({"sources": list(subset), "admissible": ok, "common_start_year": start,
+                             "min_yearly_density": min_density, "per_asset": per_asset})
+    adm = [o for o in outcomes if o["admissible"]]
+    choice = None
+    if adm:
+        choice = sorted(adm, key=lambda o: (o["common_start_year"], -o["min_yearly_density"], len(o["sources"])))[0]
+    return {"rule": "DECISIONS.md D25 + D28", "end_year": end_year, "outcomes": outcomes,
+            "choice": None if choice is None else {k: choice[k] for k in ("sources", "common_start_year",
+                                                                           "min_yearly_density")}}

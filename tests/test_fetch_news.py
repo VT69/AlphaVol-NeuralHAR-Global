@@ -112,3 +112,17 @@ def test_assess_density_rule():
     assert sparse_then_dense["start_year"] == 2016
     never = assess_density(probe([0] * 12), end_year=2017)
     assert not never["accepted"]
+
+
+def test_select_sources_prefers_longest_common_period():
+    from alphavol.fetch.news import select_sources
+    starts = pd.date_range("2015-01-15", periods=12, freq="QS-JAN", tz="UTC") + pd.Timedelta(days=14)
+    rows = []
+    for a in ("btc", "spx", "nifty"):
+        for i, s in enumerate(starts):
+            rows.append({"source": "steady", "asset": a, "window_start": s, "articles_per_trading_day": 5.0})
+            # 'late' starts in 2017 with high volume: adding it breaks the ratio test for the union
+            rows.append({"source": "late", "asset": a, "window_start": s,
+                         "articles_per_trading_day": 0.0 if s.year < 2017 else 50.0})
+    res = select_sources(pd.DataFrame(rows), assets=("btc", "spx", "nifty"), end_year=2017)
+    assert res["choice"]["sources"] == ["steady"] and res["choice"]["common_start_year"] == 2015

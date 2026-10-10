@@ -38,6 +38,7 @@ Every design decision is logged **before** it is acted on: date, options conside
 | D25 | 2026-10-10 | Claude | Sentiment sources shortlist + **pre-specified density acceptance criterion** (before any coverage data) | In effect |
 | D26 | 2026-10-10 | Claude | Fetcher architecture: paged windows, raw-response cache, resumable, loud failures, env-only keys with redaction | In effect |
 | D27 | 2026-10-10 | Claude | FinBERT scoring: labels from model config, revision hash logged, close-time windows, no zero-fill | In effect |
+| D28 | 2026-10-10 | Claude | D25 clarification: mechanical source-subset selection (pre-specified, before probe data) | In effect |
 
 ---
 
@@ -155,3 +156,12 @@ Every design decision is logged **before** it is acted on: date, options conside
 ### D27 — 2026-10-10 — FinBERT scoring and aggregation
 * **Choice.** Model `ProsusAI/finbert`. The resolved Hugging Face commit hash is written to the scoring manifest, and later runs can pin it with `--revision`. The label order is read from `model.config.id2label` and asserted to be {positive, negative, neutral}. **No hard-coded index order** (legacy assumed 0 = positive, unverified). Inputs are titles (plus snippet when present), truncated at 128 tokens, scored in eval mode with deterministic algorithms. Article score = P(pos) − P(neg).
 * **Aggregation (D20).** Row t receives articles published in (close_{t−1}, close_t] on the asset's clock; weekend and holiday news therefore goes to the next trading day for SPX/NIFTY. Daily features: `n_articles`, `has_news`, `mean_score`, `mean_pos`, `mean_neg`, `share_negative`, `score_std`. When `n_articles = 0`, score features are **NaN** and `has_news = 0`, never 0. Cross-source duplicates (same URL or normalized title within an asset) are removed before aggregation.
+
+### D28 — 2026-10-10 — Mechanical source selection under D25 (logged before any probe data exists)
+* **Gap in D25.** D25 does not say how to choose among sources when, for example, a late-starting source raises later-year density and breaks the ratio test for the union.
+* **Rule.**
+  1. For every non-empty subset S of the sources that answered the probe without error, and for each asset, compute the probe's articles per trading day as the **sum over S** (an upper bound before dedup).
+  2. Apply the D25 test to get each asset's accepted start year.
+  3. The common period for S starts at the **latest** of the three assets' start years; S is admissible only if all three assets are accepted.
+  4. Choose the admissible S with the longest common period. Ties go to the higher minimum yearly density across assets, then to fewer sources.
+* **Implementation.** `alphavol.fetch.news.select_sources`. The local fetch script applies the rule automatically and writes the probe, every subset's outcome, and the choice to `analysis/artifacts/sentiment_probe.json`. If no subset is admissible for all three assets, the script repeats the rule per asset, and any asset left without an admissible subset is excluded from the sentiment hypotheses.
