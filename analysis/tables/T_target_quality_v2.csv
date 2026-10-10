@@ -1,0 +1,4 @@
+Asset,Target (before → after),AC(1) before,AC(1) after,YW R² ceiling before,YW R² ceiling after,HAR R² before (legacy target+spec),"HAR R² after, legacy info set",HAR R² after (fixed),N after
+BTC,5-min RV → 5-min RV,0.7028,0.7024,0.6166,0.6160,0.4019,0.4203,0.5466,2741
+SPX,log r² → Garman–Klass,0.1179,0.6562,0.0949,0.5150,0.0902,0.4458,0.5078,2890
+NIFTY,log r² → Garman–Klass,0.0733,0.4989,0.0479,0.3636,0.0406,0.3081,0.3493,2829
