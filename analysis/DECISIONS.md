@@ -32,6 +32,8 @@ Every design decision is logged **before** it is acted on: date, options conside
 | D19 | 2026-10-10 | Claude | Exact dependency pins; separate fetch-only requirements | In effect |
 | D20 | 2026-10-10 | Claude | Information timing: forecast issued at the asset's close of day t; per-source availability lags | In effect |
 | D21 | 2026-10-10 | Claude | Sealed-holdout guard enforced in code (`alphavol/io.py`) | In effect |
+| D22 | 2026-10-10 | Claude | BTC microstructure recomputed causally from 5-min bars; implied-vol timing | In effect |
+| D23 | 2026-10-10 | Claude | Dataset builder: pure function on raw frames; groups explicit; pending groups recorded | In effect |
 
 ---
 
@@ -109,3 +111,17 @@ Every design decision is logged **before** it is acted on: date, options conside
 
 ### D21 — 2026-10-10 — Sealed-holdout guard
 * **Choice.** All holdout files live under `data/sealed/`. `alphavol.io.read_frame` raises `SealedDataError` for any path under `data/sealed/` unless `analysis/UNSEAL_RECORD.json` exists and the caller passes `allow_sealed=True`. That record is created only in Step 9, after the final configurations are frozen and committed. The holdout build script writes files and SHA-256 hashes only; it prints no row counts, dates or statistics.
+
+### D22 — 2026-10-10 — BTC microstructure and implied-volatility features
+* **Observation.** Legacy `btc_vpin_daily.parquet` sets the VPIN bucket size from the **whole-sample** average daily volume (`compute_microstructure.py:58-60`, mild look-ahead). Legacy "OBI" is a close-location proxy, although Binance klines contain actual taker-buy (aggressor-side) volume.
+* **Options.** (a) Reuse legacy files (lag them); (b) recompute causally in `alphavol/microstructure.py`.
+* **Choice.** (b), computed per UTC day from that day's 5-min bars (lag 0, D20):
+  * `ofi_abs`: |Σ taker-buy − Σ taker-sell| / Σ volume (aggressor order-flow imbalance).
+  * `vpin`: bulk-volume-classification VPIN (Easley, López de Prado & O'Hara 2012). Bucket size V* = (trailing 30-day mean daily volume up to the previous day) / 50; 50-bucket rolling window; value at the day's last completed bucket.
+  * `amihud`: mean over bars of |r| / quote volume (USDT) × 1e9.
+  * `roll`: 2·√(−cov(r_t, r_{t−1})) within the day when the covariance is negative, else 0 (Roll 1984).
+  Legacy files are no longer used.
+* **Implied volatility (optional group; use decided in the pre-registration).** SPX: FRED `VIXCLS`. The VIX closes at 16:15 ET, after the 16:00 SPX close, so **lag 1**. NIFTY: India VIX (to be fetched locally, `^INDIAVIX`). It closes with the NSE, so lag 0. BTC: Deribit DVOL exists only from 2023-11-03 in the repo (a 1,000-row API cap), so it is excluded for coverage, the same failure mode as the ICE spread.
+
+### D23 — 2026-10-10 — Dataset builder design
+* **Choice.** `alphavol.features.build_dataset(asset, raw: RawInputs, cfg, groups, pending)` is a pure function of in-memory raw frames. Loading is separate, so the same code builds development data and (Step 4) the sealed holdout. Every feature group must be listed explicitly. A requested group whose input is missing raises `MissingDataError` unless the group is in `pending`, in which case it is omitted and recorded in the manifest. The output keeps exogenous NaNs plus `<group>_missing` indicators; imputation happens inside models using training-window statistics only.
