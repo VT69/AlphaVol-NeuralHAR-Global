@@ -43,6 +43,7 @@ Every design decision is logged **before** it is acted on: date, options conside
 | D30 | 2026-10-10 | Claude | VADER computed alongside FinBERT as an exploratory robustness scorer | In effect |
 | D31 | 2026-10-10 | Claude | Holdout = full sealed raw + features; end date = last complete day at local run time | In effect |
 | D32 | 2026-10-10 | Claude | GDELT: daily capped relevance sample for text + uncapped daily volume; Alpha Vantage ineligible (quota) | In effect |
+| D33 | 2026-10-10 | Claude | Feasibility filter before D28 selection: estimated full-fetch requests ≤ 14 days of quota | In effect |
 
 ---
 
@@ -186,3 +187,8 @@ Every design decision is logged **before** it is acted on: date, options conside
 * **GDELT.** Exhaustive retrieval needs recursive splits below one day whenever a day exceeds the 250-article cap, which is likely for the broad SPX query. At a conservative ~5.5 s per request, that is weeks of requests. **Choice:** one `artlist` request per UTC day per asset with `maxrecords=250` and `sort=hybridrel` (relevance-weighted), i.e. a fixed-size daily sample of the most relevant articles, scored with FinBERT. News **volume** comes separately from the uncapped `timelinevolraw` endpoint (one request per month per asset) and is stored as `gdelt_volume`. The capped sample size is identical every day, so it does not create density drift across splits. The share of capped days is reported. Estimated runtime about 4,200 days × 3 assets × 5.5 s ≈ 19 h, resumable (the rate limit is not documented, so this is an estimate).
 * **Alpha Vantage.** The free quota (25 requests/day per the legacy script; not re-verified) cannot cover about 139 monthly windows × 2 assets plus cap splits in reasonable time. **Choice:** probe it on one window per year to document availability, but make it **ineligible** for D28 selection.
 * **Guardian/NYT.** Exhaustive monthly retrieval with paging, as designed in D26.
+
+### D33 — 2026-10-10 — Feasibility filter (before any probe data)
+* **Rule.** Before D28 selection, each source's full-history request count is estimated from the probe: Σ over months of ⌈(probe articles per day × days in month) / page size⌉ (GDELT: one request per day per asset, plus one volume request per month). A source is **eligible** only if the estimate is ≤ 14 × its daily request quota.
+* **Quotas** (CLI flags with these defaults; none verifiable from the sandbox): NYT 500/day (third-party summary); Guardian 500/day (assumed; overridable if the author's key allows more); GDELT has no daily quota (rate-limited only), so it is always eligible.
+* **Output.** The probe JSON records estimates, quotas and eligibility, so the filter's effect is auditable.

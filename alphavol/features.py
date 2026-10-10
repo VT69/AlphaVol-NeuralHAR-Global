@@ -74,8 +74,10 @@ def align_lagged(series: pd.Series, row_dates: pd.DatetimeIndex, *, lag: int, un
     rows = pd.DatetimeIndex(row_dates)
     offset = pd.offsets.BDay(lag) if unit == "bday" else pd.Timedelta(days=lag)
     cutoff = (rows - offset) if lag else rows
-    left = pd.DataFrame({"cutoff": cutoff.tz_convert("UTC").normalize()}, index=rows).sort_values("cutoff")
-    right = pd.DataFrame({"obs_date": s.index, "value": s.to_numpy()}).sort_values("obs_date")
+    # pandas >= 2 keeps datetime resolution (ns/us); merge_asof needs identical dtypes
+    left = pd.DataFrame({"cutoff": cutoff.tz_convert("UTC").normalize().as_unit("ns")}, index=rows).sort_values("cutoff")
+    right = pd.DataFrame({"obs_date": pd.DatetimeIndex(s.index).tz_convert("UTC").as_unit("ns"),
+                          "value": s.to_numpy()}).sort_values("obs_date")
     merged = pd.merge_asof(left.reset_index(names="row"), right, left_on="cutoff", right_on="obs_date",
                            direction="backward")
     found = merged["obs_date"].notna().to_numpy()
