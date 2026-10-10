@@ -1,0 +1,225 @@
+{
+  "lr_schedule": {
+    "lr0=0.0001": {
+      "lr_during_walk_forward_finetune": 1e-06,
+      "ratio_to_initial": 0.009999999999999998
+    },
+    "lr0=0.001": {
+      "lr_during_walk_forward_finetune": 1e-06,
+      "ratio_to_initial": 0.001
+    },
+    "lr0=0.005": {
+      "lr_during_walk_forward_finetune": 1e-06,
+      "ratio_to_initial": 0.00019999999999999998
+    }
+  },
+  "qlike_clamp": {
+    "btc": {
+      "share_HAR_forecasts_below_-10": 0.0,
+      "share_targets_below_-10": 0.009475218658892129
+    },
+    "spx": {
+      "share_HAR_forecasts_below_-10": 0.9080459770114943,
+      "share_targets_below_-10": 0.610062893081761
+    },
+    "nifty": {
+      "share_HAR_forecasts_below_-10": 0.9620455453455853,
+      "share_targets_below_-10": 0.6036297640653357
+    },
+    "grad_wrt_pred_at_[-11,-9]_actual_-12": [
+      0.0,
+      0.47510653734207153
+    ],
+    "note": "pred=-11 lies below the clamp: zero gradient; pred=-9 is inside: non-zero gradient"
+  },
+  "qlike_mse": {
+    "hand_value": 0.3068528194400546,
+    "baseline_har.qlike_loss_numpy": 0.3068528194400546,
+    "regime_har.qlike_numpy": 0.3068528194400546,
+    "dm_test._loss_differential(A=pred,B=actual)": 0.3068528194400546,
+    "neural_har.qlike_loss(torch)": 0.3068528194400546,
+    "mse_hand(log2-0)^2": 0.4804530139182014,
+    "dm_test MSE differential": 0.4804530139182014,
+    "qlike_minimised_at_pred_equal_actual": 0.0
+  },
+  "dm": {
+    "h1_repo_DM": 2.4793,
+    "h1_reference_OLS_t_x_HLN": 2.479346658349379,
+    "h1_abs_diff": 4.665834937922497e-05,
+    "h1_repo_p_normal": 0.0132,
+    "h1_p_student_t(T-1)_as_HLN_recommend": 0.013713365640897679,
+    "h2_repo_DM": 2.5952,
+    "h2_reference_rectangular_1/T": 2.5991327977529957,
+    "h2_statsmodels_uniform_HAC_t": 2.6121974311949345,
+    "identical_forecasts_DM": 0.0,
+    "identical_forecasts_p": 1.0,
+    "sign_convention": "positive DM => model B (challenger) has lower loss",
+    "oos_r2_check": {
+      "repo": 0.2684887913488381,
+      "hand": 0.2684887913488381
+    }
+  },
+  "alignment": {
+    "btc": {
+      "n_test": 275,
+      "end_aligned_dates_identical": true
+    },
+    "spx": {
+      "n_test": 287,
+      "end_aligned_dates_identical": true
+    },
+    "nifty": {
+      "n_test": 276,
+      "end_aligned_dates_identical": true
+    }
+  },
+  "variants": {
+    "deep_grn_results": {
+      "BTC": {
+        "QLIKE_DM": -0.2716,
+        "QLIKE_p": 0.786,
+        "MSE_DM": -6.1456
+      },
+      "SPX": {
+        "QLIKE_DM": 0.2291,
+        "QLIKE_p": 0.8188,
+        "MSE_DM": -3.0646
+      },
+      "NIFTY": {
+        "QLIKE_DM": 3.2444,
+        "QLIKE_p": 0.0012,
+        "MSE_DM": -1.8121
+      }
+    },
+    "transformer_results": {
+      "BTC": {
+        "QLIKE_DM": 0.8346,
+        "QLIKE_p": 0.4039,
+        "MSE_DM": -4.7071
+      },
+      "SPX": {
+        "QLIKE_DM": 5.0427,
+        "QLIKE_p": 0.0,
+        "MSE_DM": -3.9533
+      },
+      "NIFTY": {
+        "QLIKE_DM": 2.354,
+        "QLIKE_p": 0.0186,
+        "MSE_DM": -1.4953
+      }
+    },
+    "ensemble_results": {
+      "BTC": {
+        "QLIKE_DM": 1.98,
+        "QLIKE_p": 0.0477,
+        "MSE_DM": -3.2833
+      },
+      "SPX": {
+        "QLIKE_DM": 5.053,
+        "QLIKE_p": 0.0,
+        "MSE_DM": -3.6305
+      },
+      "NIFTY": {
+        "QLIKE_DM": 2.4358,
+        "QLIKE_p": 0.0149,
+        "MSE_DM": -3.0777
+      }
+    },
+    "paper_reports_variant": [
+      "ensemble_results"
+    ],
+    "git_history": [
+      "e27f6da 2026-07-30 15:55:00 +0530 feat: 40 Optuna trials + CosineAnnealingLR + GRN/Transformer ensemble with inverse-loss weighting",
+      "1a1455d 2026-07-30 15:38:02 +0530 feat: implement Tabular FT-Transformer as a routing option in NeuralHAR",
+      "e787251 2026-07-30 15:27:47 +0530 feat: upgrade Gated Residual Network to DeepGRN and add num_layers to Optuna HPO",
+      "63c8b50 2026-07-30 15:20:42 +0530 feat: implement Optuna HPO and Walk-Forward Expanding Window retraining for Neural-HAR",
+      "e848880 2026-07-30 14:29:07 +0530 feat: integrate Neural-HAR, complete paper pipeline, and fix CP1252 logging",
+      "36c4749 2026-05-20 09:33:34 +0530 Refactor NeuralHAR with logging and QLIKE loss",
+      "7cd02ca 2026-05-19 14:01:29 +0530 Implement NeuralHAR model with GatedResidualNetwork",
+      "4994a4d 2026-05-14 23:26:14 +0530 Initial Repo Setup"
+    ]
+  },
+  "mcs": {
+    "clear_ordering": {
+      "repo_included": [
+        "best"
+      ],
+      "arch_included": [
+        "best"
+      ],
+      "repo_pvalues": {
+        "best": 1.0,
+        "mid": 0.0,
+        "worst": 0.0
+      },
+      "arch_pvalues": {
+        "worst": 0.0,
+        "mid": 0.0,
+        "best": 1.0
+      }
+    },
+    "size_equal_models": {
+      "replications": 400,
+      "B": 300,
+      "nominal_alpha": 0.1,
+      "repo_rejection_rate": 0.1625,
+      "arch_rejection_rate": 0.1625,
+      "mc_se_at_0.10": 0.015000000000000001,
+      "seconds": 42.6
+    },
+    "committed_HAR_vs_HARS": {
+      "btc": {
+        "repo_included": [
+          "HAR",
+          "HAR-S"
+        ],
+        "arch_included": [
+          "HAR",
+          "HAR-S"
+        ],
+        "repo_pvalues": {
+          "HAR": 1.0,
+          "HAR-S": 1.0
+        },
+        "arch_pvalues": {
+          "HAR-S": 0.3,
+          "HAR": 1.0
+        }
+      },
+      "spx": {
+        "repo_included": [
+          "HAR",
+          "HAR-S"
+        ],
+        "arch_included": [
+          "HAR",
+          "HAR-S"
+        ],
+        "repo_pvalues": {
+          "HAR-S": 1.0,
+          "HAR": 1.0
+        },
+        "arch_pvalues": {
+          "HAR": 0.516,
+          "HAR-S": 1.0
+        }
+      },
+      "nifty": {
+        "repo_included": [
+          "HAR"
+        ],
+        "arch_included": [
+          "HAR"
+        ],
+        "repo_pvalues": {
+          "HAR": 1.0,
+          "HAR-S": 0.006
+        },
+        "arch_pvalues": {
+          "HAR-S": 0.005,
+          "HAR": 1.0
+        }
+      }
+    }
+  }
+}
