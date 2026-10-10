@@ -35,6 +35,9 @@ Every design decision is logged **before** it is acted on: date, options conside
 | D22 | 2026-10-10 | Claude | BTC microstructure recomputed causally from 5-min bars; implied-vol timing | In effect |
 | D23 | 2026-10-10 | Claude | Dataset builder: pure function on raw frames; groups explicit; pending groups recorded | In effect |
 | D24 | 2026-10-10 | Claude | Intraday SPX/NIFTY data: recommendation only; Garman–Klass stays primary | Recommendation (author decision) |
+| D25 | 2026-10-10 | Claude | Sentiment sources shortlist + **pre-specified density acceptance criterion** (before any coverage data) | In effect |
+| D26 | 2026-10-10 | Claude | Fetcher architecture: paged windows, raw-response cache, resumable, loud failures, env-only keys with redaction | In effect |
+| D27 | 2026-10-10 | Claude | FinBERT scoring: labels from model config, revision hash logged, close-time windows, no zero-fill | In effect |
 
 ---
 
@@ -135,3 +138,20 @@ Every design decision is logged **before** it is acted on: date, options conside
   * **NIFTY:** no verified licensed source found. Community datasets exist (Kaggle "NSE – Nifty 50 Index Minute data", listed CC0; GitHub repositories) but their upstream provenance is undocumented. NSE index data is exchange-proprietary, so a CC0 label on a repackaged copy does not establish the right to use it in a publication.
 * **Options.** (a) Buy FirstRate SPX 5-minute data and use intraday RV for SPX only; (b) use community NIFTY minute data despite unclear licensing; (c) keep Garman–Klass for both and report intraday RV as future work, or as a robustness check on SPX if (a) is bought.
 * **Recommendation.** (c) now. (a) if the author is willing to purchase and confirms the licence permits publishing derived results. **Do not use (b)** in a published paper without written licence confirmation. **No switch has been made**; GK remains the primary target per R2.
+
+### D25 — 2026-10-10 — Sentiment sources and a pre-specified density criterion
+* **Shortlist** (details and documentation claims in `analysis/sentiment_sources.md`): GDELT DOC 2.0 API (no key; global, filterable by source country, so the NIFTY query can be Indian market news); The Guardian Open Platform (key; deep archive); NYT Article Search (key; deep archive); Alpha Vantage NEWS_SENTIMENT with explicit time windows (key; secondary). The legacy data and the HDB ticker proxy are not used (R3).
+* **Coverage is decided by a probe, not documentation.** `scripts/local/probe_coverage.py` queries one 7-day window per quarter from 2015-01 to 2026-07 for every source × asset query. It records article counts and raw responses.
+* **Acceptance criterion, fixed now before any coverage data is seen.** A source (or union of sources) is accepted for asset A over a period P if both hold:
+  1. **No holes.** Every calendar quarter in P has ≥ 1 article per trading day on average in the probe sample.
+  2. **Comparable density.** max/min of the yearly mean articles per trading day over the years in P is ≤ 4.
+  The sentiment experiments use the longest P ending at `dev_end` that satisfies both for **all three assets** with the chosen sources. If P is shorter than the HAR sample, HAR-only baselines are reported on both the full sample and P, and every sentiment comparison uses P only. If no source satisfies the criterion for an asset, that asset is excluded from the sentiment hypotheses and the exclusion is reported. Any relaxation of these thresholds must be logged here **before** it is applied, with a reason.
+* **Rationale.** The defining failure of the old data was sentiment present in test but absent in train. A criterion fixed in advance prevents choosing sources and windows by their results.
+
+### D26 — 2026-10-10 — Fetcher architecture (Step 3/4)
+* **Choice.** `alphavol/fetch/`: one HTTP client with per-source minimum request intervals, retries with exponential backoff, and `Retry-After` support on 429. Every raw response is cached under `data/cache/<source>/` (gitignored), keyed by the request **without** credentials, so runs are resumable. Windows are paged; any window returning the source's maximum page size is split recursively (no silent truncation). Normalized articles accumulate in per-month parquet files (append + dedup by URL), never overwritten. Any unexpected payload, HTTP error or exhausted retries raises.
+* **Credentials (R5).** Keys are read only from environment variables (`GUARDIAN_API_KEY`, `NYT_API_KEY`, `ALPHAVANTAGE_API_KEY`), never from `.env.example`. They are never logged, cached, or written to any file. URLs in exceptions are redacted, because several APIs take keys as query parameters and `requests` puts the full URL into error messages.
+
+### D27 — 2026-10-10 — FinBERT scoring and aggregation
+* **Choice.** Model `ProsusAI/finbert`. The resolved Hugging Face commit hash is written to the scoring manifest, and later runs can pin it with `--revision`. The label order is read from `model.config.id2label` and asserted to be {positive, negative, neutral}. **No hard-coded index order** (legacy assumed 0 = positive, unverified). Inputs are titles (plus snippet when present), truncated at 128 tokens, scored in eval mode with deterministic algorithms. Article score = P(pos) − P(neg).
+* **Aggregation (D20).** Row t receives articles published in (close_{t−1}, close_t] on the asset's clock; weekend and holiday news therefore goes to the next trading day for SPX/NIFTY. Daily features: `n_articles`, `has_news`, `mean_score`, `mean_pos`, `mean_neg`, `share_negative`, `score_std`. When `n_articles = 0`, score features are **NaN** and `has_news = 0`, never 0. Cross-source duplicates (same URL or normalized title within an asset) are removed before aggregation.
