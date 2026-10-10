@@ -9,7 +9,7 @@ Columns: ID · date · status (pre-registered / exploratory / audit / abandoned)
 | Category | Count |
 |---|---|
 | Audit re-computations on pre-existing artefacts (Phases 1–2, Step 1) | see A-entries |
-| Pre-registered experiments | 0 |
+| Pre-registered experiments | 0 (grid fixed: 92 configurations, 120 neural runs; `PREREGISTRATION.md`) |
 | Exploratory experiments | 0 |
 | Abandoned | 0 |
 
@@ -40,4 +40,7 @@ Columns: ID · date · status (pre-registered / exploratory / audit / abandoned)
 
 ## E. Code verification on synthetic data (not evidence)
 
-*(entries added as harness tests are written)*
+| ID | Date | Purpose | Script | Result |
+|---|---|---|---|---|
+| E1 | 2026-10-10 | Fit-time benchmark for the compute plan | `scripts/bench_fit_times.py` → `analysis/artifacts/bench_fit_times.json` | GRN 4.3–7.1 s, Transformer 22.1 s, GBM 0.34 s, OLS 0.008 s per fit (single thread) |
+| E2 | 2026-10-10 | Unit/plumbing tests (all synthetic or committed dev data; no model evaluated on real data) | `pytest` (77 tests) | all pass |

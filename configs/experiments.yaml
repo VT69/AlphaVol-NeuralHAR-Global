@@ -1,0 +1,60 @@
+# Pre-registered experiment grid (analysis/PREREGISTRATION.md). The runner refuses anything not
+# listed here unless tagged exploratory. Feature-set names refer to `feature_sets`.
+seeds_neural: [0, 1, 2, 3, 4]
+tuning: {n_trials: 40, seed: 0, inner_valid_frac: 0.2, max_epochs: 150}
+refit_every: {linear: 1, har_qlike: {exchange: 21, continuous: 30}, garch: {exchange: 21, continuous: 30},
+              gbm: {exchange: 63, continuous: 91}, neural: {exchange: 63, continuous: 91}}
+initial_window_years: 3
+feature_sets:
+  HAR: [RV_d, RV_w, RV_m]
+  SENT: [sent_mean_score, sent_has_news]
+  ATTN: [log1p_sent_n_articles, log1p_sent_gdelt_volume]
+  MACRO: [term_slope, credit_spread, macro_missing]
+  IV: [iv_logvar, implied_vol_missing]                  # spx, nifty
+  FG: [fear_greed, fear_greed_missing]                  # btc
+  MICRO: [ofi_abs, vpin, log_amihud, roll, microstructure_missing]   # btc
+groups_by_asset:
+  btc: [MACRO, FG, MICRO]
+  spx: [MACRO, IV]
+  nifty: [MACRO, IV]
+models:
+  # name: {family, features (expression over sets), loss, notes}
+  RW:            {family: naive_rw}
+  HistMean:      {family: naive_mean}
+  HAR-OLS:       {family: linear, features: HAR, bias: none}
+  HAR-BC:        {family: linear, features: HAR, bias: smearing}
+  HAR-QLIKE:     {family: linear_qlike, features: HAR}
+  HARQ:          {family: harq, assets: [btc]}
+  GARCH:         {family: garch}
+  LIN-SENT:      {family: linear, features: HAR+SENT, bias: smearing}         # H1 primary challenger
+  LIN-ATTN:      {family: linear, features: HAR+ATTN, bias: smearing}         # H5
+  LIN-MACRO:     {family: linear, features: HAR+MACRO, bias: smearing}        # H5
+  LIN-IV:        {family: linear, features: HAR+IV, bias: smearing, assets: [spx, nifty]}
+  LIN-FG:        {family: linear, features: HAR+FG, bias: smearing, assets: [btc]}
+  LIN-MICRO:     {family: linear, features: HAR+MICRO, bias: smearing, assets: [btc]}
+  LIN-ALL:       {family: linear, features: ALL, bias: smearing}              # H3
+  LIN-ALLnoS:    {family: linear, features: ALL-SENT, bias: smearing}         # H3
+  LIN-ALL-OLS:   {family: linear, features: ALL, bias: none}                  # H4 (c)
+  LIN-ALL-QLIKE: {family: linear_qlike, features: ALL}                        # H4 (a)
+  GBM-HAR:       {family: gbm, features: HAR, loss: qlike}
+  GBM-SENT:      {family: gbm, features: HAR+SENT, loss: qlike}
+  GBM-ALLnoS:    {family: gbm, features: ALL-SENT, loss: qlike}
+  GBM-ALL:       {family: gbm, features: ALL, loss: qlike}
+  GBM-ALLnoS-MSE: {family: gbm, features: ALL-SENT, loss: mse}
+  GBM-ALL-MSE:   {family: gbm, features: ALL, loss: mse}
+  NN-GRN-HAR:    {family: neural, arch: grn, features: HAR, loss: qlike}
+  NN-GRN-SENT:   {family: neural, arch: grn, features: HAR+SENT, loss: qlike}
+  NN-GRN-ALLnoS: {family: neural, arch: grn, features: ALL-SENT, loss: qlike}
+  NN-GRN-ALL:    {family: neural, arch: grn, features: ALL, loss: qlike}       # H2 primary neural
+  NN-GRN-ALLnoS-MSE: {family: neural, arch: grn, features: ALL-SENT, loss: mse}
+  NN-GRN-ALL-MSE: {family: neural, arch: grn, features: ALL, loss: mse}
+  NN-TF-ALLnoS:  {family: neural, arch: transformer, features: ALL-SENT, loss: qlike}
+  NN-TF-ALL:     {family: neural, arch: transformer, features: ALL, loss: qlike}
+  NN-ENS-ALLnoS: {family: ensemble, members: [NN-GRN-ALLnoS, NN-TF-ALLnoS]}
+  NN-ENS-ALL:    {family: ensemble, members: [NN-GRN-ALL, NN-TF-ALL]}
+hypotheses:
+  H1: {pairs: [[HAR-BC, LIN-SENT]], holm_over: assets, confirmatory: true}
+  H2: {pairs: [[HAR-BC, NN-GRN-ALL]], also_report: [[HAR-OLS, NN-GRN-ALL]], holm_over: assets}
+  H3: {pairs: [[LIN-ALLnoS, LIN-ALL], [GBM-ALLnoS, GBM-ALL], [NN-GRN-ALLnoS, NN-GRN-ALL]], holm_over: assets_x_pairs}
+  H4: {pairs: [[LIN-ALL, LIN-ALL-QLIKE], [LIN-ALL-OLS, LIN-ALL], [GBM-ALL-MSE, GBM-ALL], [NN-GRN-ALL-MSE, NN-GRN-ALL]], holm_over: assets_x_pairs}
+  H5: {pairs: [[HAR-BC, LIN-ATTN], [HAR-BC, LIN-MACRO], [HAR-BC, LIN-IV], [HAR-BC, LIN-FG], [HAR-BC, LIN-MICRO]], holm_over: assets_x_pairs}

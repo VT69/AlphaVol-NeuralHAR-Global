@@ -1,0 +1,11 @@
+{
+  "model_configs_per_asset": {
+    "btc": 32,
+    "spx": 30,
+    "nifty": 30
+  },
+  "neural_training_runs": 120,
+  "configurations_total": 92,
+  "dm_tests_planned": 40,
+  "tuning_studies": 15
+}
