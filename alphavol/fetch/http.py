@@ -58,9 +58,9 @@ class CachedClient:
     session: requests.Session = field(default_factory=requests.Session)
     _last: float = 0.0
 
-    def _cache_path(self, path: str, params: dict[str, Any]) -> Path:
+    def _cache_path(self, path: str, params: dict[str, Any], tag: str | None = None) -> Path:
         clean = {k: params[k] for k in sorted(params)}
-        key = hashlib.sha256(json.dumps([self.base_url, path, clean], sort_keys=True, default=str).encode()).hexdigest()
+        key = hashlib.sha256(json.dumps([self.base_url, path, clean, tag], sort_keys=True, default=str).encode()).hexdigest()
         return self.cache_root / self.source / key[:2] / f"{key}.json"
 
     def _redacted(self, path: str, params: dict[str, Any]) -> str:
@@ -75,10 +75,14 @@ class CachedClient:
             text = text.replace(os.environ[self.key_env], "***")
         return text
 
-    def get(self, path: str = "", params: dict[str, Any] | None = None) -> Any:
-        """GET with cache. Returns parsed JSON (or text if ``expect='text'``)."""
+    def get(self, path: str = "", params: dict[str, Any] | None = None, *, cache_tag: str | None = None) -> Any:
+        """GET with cache. Returns parsed JSON (or text if ``expect='text'``).
+
+        ``cache_tag`` is part of the cache key but never sent; use it to force a fresh fetch of an
+        endpoint whose parameters do not change (e.g. a full-history download at a later date).
+        """
         params = dict(params or {})
-        cpath = self._cache_path(path, params)
+        cpath = self._cache_path(path, params, cache_tag)
         if cpath.exists():
             return json.loads(cpath.read_text())["body"]
         live = dict(params)

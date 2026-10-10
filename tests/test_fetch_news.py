@@ -126,3 +126,21 @@ def test_select_sources_prefers_longest_common_period():
                          "articles_per_trading_day": 0.0 if s.year < 2017 else 50.0})
     res = select_sources(pd.DataFrame(rows), assets=("btc", "spx", "nifty"), end_year=2017)
     assert res["choice"]["sources"] == ["steady"] and res["choice"]["common_start_year"] == 2015
+
+
+def test_gdelt_sample_mode_one_request_and_records_cap():
+    c = FakeClient(_gdelt_fn(1000))
+    log = FetchLog()
+    s = datetime(2024, 1, 1, tzinfo=UTC)
+    arts = GdeltDoc(c).articles("spx", s, s + timedelta(days=1), log, sample=True)
+    assert len(arts) == 250 and len(c.calls) == 1 and c.calls[0]["sort"] == "hybridrel"
+    assert len(log.truncations) == 1
+
+
+def test_gdelt_daily_volume_sums_by_day():
+    body = {"timeline": [{"series": "Article Count", "data": [
+        {"date": "20240101T000000Z", "value": 3}, {"date": "20240101T120000Z", "value": 2},
+        {"date": "20240102T000000Z", "value": 7}]}]}
+    v = GdeltDoc(FakeClient(lambda p, q: body)).daily_volume("spx", datetime(2024, 1, 1, tzinfo=UTC),
+                                                             datetime(2024, 1, 3, tzinfo=UTC))
+    assert v.tolist() == [5.0, 7.0]

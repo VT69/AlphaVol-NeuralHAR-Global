@@ -39,6 +39,10 @@ Every design decision is logged **before** it is acted on: date, options conside
 | D26 | 2026-10-10 | Claude | Fetcher architecture: paged windows, raw-response cache, resumable, loud failures, env-only keys with redaction | In effect |
 | D27 | 2026-10-10 | Claude | FinBERT scoring: labels from model config, revision hash logged, close-time windows, no zero-fill | In effect |
 | D28 | 2026-10-10 | Claude | D25 clarification: mechanical source-subset selection (pre-specified, before probe data) | In effect |
+| D29 | 2026-10-10 | Claude | Commit derived scores + daily aggregates only; headline text stays in the local cache | In effect |
+| D30 | 2026-10-10 | Claude | VADER computed alongside FinBERT as an exploratory robustness scorer | In effect |
+| D31 | 2026-10-10 | Claude | Holdout = full sealed raw + features; end date = last complete day at local run time | In effect |
+| D32 | 2026-10-10 | Claude | GDELT: daily capped relevance sample for text + uncapped daily volume; Alpha Vantage ineligible (quota) | In effect |
 
 ---
 
@@ -165,3 +169,20 @@ Every design decision is logged **before** it is acted on: date, options conside
   3. The common period for S starts at the **latest** of the three assets' start years; S is admissible only if all three assets are accepted.
   4. Choose the admissible S with the longest common period. Ties go to the higher minimum yearly density across assets, then to fewer sources.
 * **Implementation.** `alphavol.fetch.news.select_sources`. The local fetch script applies the rule automatically and writes the probe, every subset's outcome, and the choice to `analysis/artifacts/sentiment_probe.json`. If no subset is admissible for all three assets, the script repeats the rule per asset, and any asset left without an admissible subset is excluded from the sentiment hypotheses.
+
+### D29 — 2026-10-10 — What is committed from the news fetch
+* **Options.** (a) Commit raw headline text; (b) commit per-article derived data without text (asset, source, publication time, SHA-256 of URL, domain, FinBERT and VADER probabilities) plus daily aggregates, keeping text in the local `data/cache` (gitignored).
+* **Choice.** (b).
+* **Rationale.** Publishing third-party headline text in a public repository may breach the sources' terms (Guardian/NYT developer terms; GDELT links to publishers' content). The full-history corpus could also reach hundreds of MB. Analyses that need text (error analysis, alternative models) run locally against the cache. Their scripts are committed and their outputs logged.
+
+### D30 — 2026-10-10 — Secondary sentiment scorer for robustness (exploratory only)
+* **Choice.** VADER compound score (Hutto & Gilbert 2014; `vaderSentiment` 3.3.2, lexicon bundled in the package) is computed alongside FinBERT in the local scoring stage. FinBERT remains the primary, pre-registered measure; VADER is used only in Step 8 and labelled exploratory.
+
+### D31 — 2026-10-10 — Holdout contents and end date
+* **Choice.** The local holdout stage fetches all sources from D + 1 = 2026-07-29 to the **last complete day** at the time it is run (yesterday UTC for BTC; last completed session for SPX/NIFTY). Raw inputs and built features both go to `data/sealed/`. Every file is SHA-256-hashed into `data/sealed/SHA256SUMS`, and the hash of that manifest is recorded here. Nothing else is printed. At Step 9 the features are rebuilt from the sealed raw data with the frozen pipeline: matching hashes show nothing changed; any mismatch is reported (integrity rule 4).
+* **Expected size** (calendar arithmetic only, no data inspected): from 2026-07-29 to early October 2026 is about 70 BTC days and about 50 SPX/NIFTY sessions. This is a small holdout; the pre-registration must account for its limited power.
+
+### D32 — 2026-10-10 — GDELT sampling and Alpha Vantage eligibility (before any data)
+* **GDELT.** Exhaustive retrieval needs recursive splits below one day whenever a day exceeds the 250-article cap, which is likely for the broad SPX query. At a conservative ~5.5 s per request, that is weeks of requests. **Choice:** one `artlist` request per UTC day per asset with `maxrecords=250` and `sort=hybridrel` (relevance-weighted), i.e. a fixed-size daily sample of the most relevant articles, scored with FinBERT. News **volume** comes separately from the uncapped `timelinevolraw` endpoint (one request per month per asset) and is stored as `gdelt_volume`. The capped sample size is identical every day, so it does not create density drift across splits. The share of capped days is reported. Estimated runtime about 4,200 days × 3 assets × 5.5 s ≈ 19 h, resumable (the rate limit is not documented, so this is an estimate).
+* **Alpha Vantage.** The free quota (25 requests/day per the legacy script; not re-verified) cannot cover about 139 monthly windows × 2 assets plus cap splits in reasonable time. **Choice:** probe it on one window per year to document availability, but make it **ineligible** for D28 selection.
+* **Guardian/NYT.** Exhaustive monthly retrieval with paging, as designed in D26.

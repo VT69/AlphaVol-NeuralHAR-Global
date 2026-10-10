@@ -102,15 +102,31 @@ class GdeltDoc:
                 total += int(pt.get("value", 0))
         return total
 
-    def articles(self, asset: str, start: datetime, end: datetime, flog: FetchLog) -> list[dict]:
+    def daily_volume(self, asset: str, start: datetime, end: datetime) -> pd.Series:
+        """Uncapped daily article volume for the query (timelinevolraw), indexed by UTC date."""
+        body = self.c.get("", {"query": GDELT_QUERIES[asset], "mode": "timelinevolraw", "format": "json",
+                               "timelinesmooth": 0, "startdatetime": self._fmt(start), "enddatetime": self._fmt(end)})
+        if not isinstance(body, dict) or "timeline" not in body:
+            raise FetchError(f"gdelt: unexpected timeline payload for {asset}: {str(body)[:200]}")
+        pts = [(pd.to_datetime(pt["date"], format="%Y%m%dT%H%M%SZ", utc=True), int(pt["value"]))
+               for series in body["timeline"] for pt in series.get("data", [])]
+        s = pd.Series({d: v for d, v in pts}, dtype=float, name="gdelt_volume")
+        return s.groupby(s.index.floor("D")).sum() if len(s) else s
+
+    def articles(self, asset: str, start: datetime, end: datetime, flog: FetchLog, *,
+                 sample: bool = False) -> list[dict]:
+        """``sample=True`` (D32): one request for the window, top-250 by relevance, no splitting;
+        capped windows are counted in ``flog.truncations`` as sampled, not lost."""
         body = self.c.get("", {"query": GDELT_QUERIES[asset], "mode": "artlist", "format": "json",
-                               "maxrecords": self.CAP, "sort": "datedesc",
+                               "maxrecords": self.CAP, "sort": "hybridrel" if sample else "datedesc",
                                "startdatetime": self._fmt(start), "enddatetime": self._fmt(end)})
         flog.requests += 1
         if not isinstance(body, dict):
             raise FetchError(f"gdelt: unexpected artlist payload: {str(body)[:200]}")
         arts = body.get("articles", [])
-        if len(arts) >= self.CAP:
+        if sample and len(arts) >= self.CAP:
+            flog.truncations.append(Truncation(self.name, asset, str(start), str(end), len(arts)))
+        elif len(arts) >= self.CAP:
             if end - start > self.MIN_WINDOW:
                 a, b = _split(start, end)
                 return self.articles(asset, *a, flog) + self.articles(asset, *b, flog)
