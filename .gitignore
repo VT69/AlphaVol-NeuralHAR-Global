@@ -23,3 +23,9 @@ data_collection/data/raw/ohlcv/btc_1h.parquet
 Thumbs.db
 # Audit artifacts (machine-readable results read by the dashboard)
 !analysis/artifacts/*.json
+
+# Local virtualenvs and caches
+.venv/
+.pytest_cache/
+# Raw API response cache written by local fetchers (large; re-creatable)
+data/cache/
