@@ -30,6 +30,8 @@ Every design decision is logged **before** it is acted on: date, options conside
 | D17 | 2026-10-10 | Claude | Exogenous missing values: bounded causal forward-fill + missing indicators; never zero-fill | In effect |
 | D18 | 2026-10-10 | Claude | Single metrics module: DM with Newey–West HAC + Student-t; MCS via `arch` | In effect |
 | D19 | 2026-10-10 | Claude | Exact dependency pins; separate fetch-only requirements | In effect |
+| D20 | 2026-10-10 | Claude | Information timing: forecast issued at the asset's close of day t; per-source availability lags | In effect |
+| D21 | 2026-10-10 | Claude | Sealed-holdout guard enforced in code (`alphavol/io.py`) | In effect |
 
 ---
 
@@ -94,3 +96,16 @@ Every design decision is logged **before** it is acted on: date, options conside
 
 ### D19 — 2026-10-10 — Dependencies
 * **Choice.** `requirements.txt` pins exact versions of the analysis stack (resolved in the audit venv, Python 3.11). `requirements-fetch.txt` pins the fetch-only stack (yfinance, requests, transformers, …) for the author's local run. The legacy `requirements.txt` content is preserved as `requirements-legacy.txt`.
+
+### D20 — 2026-10-10 — Information timing (what is known when the forecast is issued)
+* **Rule.** The forecast of the log variance of day t+1 is issued at the **close of day t** on the asset's own clock: BTC 00:00 UTC (end of the UTC day); SPX the NYSE close (16:00 America/New_York); NIFTY the NSE close (15:30 Asia/Kolkata). A feature may enter row t only if it was observable by that time.
+* **Per-source lag.**
+  * RV, Garman–Klass, and BTC intraday microstructure (OBI², VPIN, Amihud, Roll) for day t: computed from day-t bars, so **lag 0**.
+  * US macro from FRED (T10Y2Y, BAA10Y, VIXCLS): observation date d is a US end-of-day value. Lag 0 for SPX (known at the US close); **lag 1 business day for BTC and NIFTY** (not published by 00:00 UTC; the US close of day t happens after the NSE close). For simplicity and safety, **lag 1 for all assets**.
+  * Crypto Fear & Greed (Alternative.me), stamped 00:00 UTC of date d: **lag 1**.
+  * News sentiment for row t: articles published in (close_{t−1}, close_t], on the asset's clock (Step 3).
+* **Options considered.** (a) Uniform lag 1 for everything (legacy: discards day-t information for RV-derived features, which is the HAR mis-specification); (b) per-source timing as above.
+* **Choice.** (b). Each rule has a unit test that perturbs data after the cutoff and asserts that row t is unchanged.
+
+### D21 — 2026-10-10 — Sealed-holdout guard
+* **Choice.** All holdout files live under `data/sealed/`. `alphavol.io.read_frame` raises `SealedDataError` for any path under `data/sealed/` unless `analysis/UNSEAL_RECORD.json` exists and the caller passes `allow_sealed=True`. That record is created only in Step 9, after the final configurations are frozen and committed. The holdout build script writes files and SHA-256 hashes only; it prints no row counts, dates or statistics.

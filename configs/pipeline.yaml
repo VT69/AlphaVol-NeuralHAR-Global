@@ -1,0 +1,37 @@
+# Pipeline configuration (externalised). All paths are relative to the repository root.
+# Decisions referenced: analysis/DECISIONS.md D11-D21.
+paths:
+  raw_dir: data_collection/data/raw          # committed development raw data
+  extra_raw_dir: data/raw_v2                 # new development raw (BAA10Y, sentiment) from local fetch
+  processed_dir: data/processed_v2           # rebuilt datasets (development only)
+  sealed_dir: data/sealed                    # holdout; guarded by alphavol.io
+  unseal_record: analysis/UNSEAL_RECORD.json
+dev_end: "2026-07-28"                        # D14: dev rows need target date <= dev_end
+assets:
+  btc:
+    calendar: continuous                     # every UTC day
+    close_tz: UTC
+    close_time: "00:00"                      # end of UTC day
+    variance: realized_5min                  # sum of squared 5-min log returns
+    har_windows: {d: 1, w: 7, m: 30}         # D11
+    har_min_counts: {w: 6, m: 25}            # D13
+    min_bars_per_day: 144                    # D14: keep days with >= 50% of 288 bars, flag < 276
+    flag_bars_below: 276
+  spx:
+    calendar: exchange
+    close_tz: America/New_York
+    close_time: "16:00"
+    variance: garman_klass
+    har_windows: {d: 1, w: 5, m: 22}
+    har_min_counts: {w: 4, m: 18}
+  nifty:
+    calendar: exchange
+    close_tz: Asia/Kolkata
+    close_time: "15:30"
+    variance: garman_klass
+    har_windows: {d: 1, w: 5, m: 22}
+    har_min_counts: {w: 4, m: 18}
+exogenous:
+  max_staleness_business_days: 5             # D17
+  fred_lag_business_days: 1                  # D20
+  fear_greed_lag_days: 1                     # D20
