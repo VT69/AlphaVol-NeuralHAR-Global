@@ -1,0 +1,145 @@
+{
+  "extended_sources_present": [
+    "AlphaVantage",
+    "Finnhub"
+  ],
+  "extended": {
+    "BTC|AlphaVantage": {
+      "n": 785,
+      "first": "2026-06-18 10:21:00+00:00",
+      "last": "2026-07-30 05:30:00+00:00",
+      "span_days": 41.8,
+      "distinct_days": 43,
+      "articles_per_day_in_span": 18.78,
+      "median_gap_hours": 0.699,
+      "frac_relevant_to_asset": 0.7732,
+      "frac_with_av_score": 1.0,
+      "n_in_last_60d": 785
+    },
+    "NIFTY|AlphaVantage": {
+      "n": 1000,
+      "first": "2023-07-03 07:34:00+00:00",
+      "last": "2026-07-29 22:40:18+00:00",
+      "span_days": 1122.63,
+      "distinct_days": 290,
+      "articles_per_day_in_span": 0.89,
+      "median_gap_hours": 2.463,
+      "frac_relevant_to_asset": 0.357,
+      "frac_mentioning_hdfc": 0.975,
+      "frac_with_av_score": 1.0,
+      "n_in_last_60d": 168
+    },
+    "SPX|AlphaVantage": {
+      "n": 543,
+      "first": "2014-04-08 06:05:00+00:00",
+      "last": "2026-07-29 21:13:34+00:00",
+      "span_days": 4495.63,
+      "distinct_days": 277,
+      "articles_per_day_in_span": 0.12,
+      "median_gap_hours": 10.498,
+      "frac_relevant_to_asset": 0.9466,
+      "frac_with_av_score": 1.0,
+      "n_in_last_60d": 90
+    },
+    "SPX|Finnhub": {
+      "n": 100,
+      "first": "2026-07-27 15:24:09+00:00",
+      "last": "2026-07-30 06:56:06+00:00",
+      "span_days": 2.65,
+      "distinct_days": 4,
+      "articles_per_day_in_span": 37.78,
+      "median_gap_hours": 0.364,
+      "frac_relevant_to_asset": 0.21,
+      "frac_with_av_score": 0.0,
+      "n_in_last_60d": 100
+    }
+  },
+  "extended_dup_titles_across_assets": 209,
+  "newsapi": {
+    "BTC": {
+      "n": 100,
+      "first": "2026-07-28 10:22:43+00:00",
+      "last": "2026-07-28 16:30:43+00:00",
+      "span_days": 0.26,
+      "distinct_days": 1,
+      "articles_per_day_in_span": 391.3,
+      "median_gap_hours": 0.043,
+      "frac_relevant_to_asset": 0.77,
+      "sample_titles": [
+        "Stacks activates PoX-5 upgrade to launch Bitcoin staking",
+        "Nasdaq 100 nears correction territory as AI investment doubts pile up",
+        "US goods trade deficit shrinks to $101.5B in June, but Q2 GDP growth still takes the hit",
+        "Nancy Guthrie sheriff claims he\u2019s \u2018still positive\u2019 kidnapping case will be solved after Savannah\u2019s new plea",
+        "Bitcoin lows pierce $63K as Asia chip-stock crash spreads to Wall Street"
+      ]
+    },
+    "NIFTY": {
+      "n": 98,
+      "first": "2026-07-27 04:01:23+00:00",
+      "last": "2026-07-28 16:36:01+00:00",
+      "span_days": 1.52,
+      "distinct_days": 2,
+      "articles_per_day_in_span": 64.3,
+      "median_gap_hours": 0.211,
+      "frac_relevant_to_asset": 0.4184,
+      "sample_titles": [
+        "This $60 live streaming mixer tries to imitate a $499 audio powerhouse, and I'm not sure it succeeds",
+        "US-Iran war weighs on L&T, trims Q1 margins, West Asia order inflow",
+        "Ahead of Market: 10 things that will decide stock market action on Wednesday",
+        "Knowledge Realty Trust NOI rises 15pc to Rs 1243cr in Q1; distributes 752cr to unit holders",
+        "FIIs net buy shares worth Rs 755 crore, DIIs net buy Rs 1,664 crore on July 28"
+      ]
+    }
+  },
+  "newsapi_used_by_finbert_pipeline": false,
+  "finbert_by_split": {
+    "btc": {
+      "train_rows": 2195,
+      "train_nonzero": 0,
+      "val_rows": 274,
+      "val_nonzero": 0,
+      "test_rows": 275,
+      "test_nonzero": 40,
+      "train_period": [
+        "2019-01-23",
+        "2025-01-25"
+      ],
+      "test_period": [
+        "2025-10-27",
+        "2026-07-28"
+      ]
+    },
+    "spx": {
+      "train_rows": 2289,
+      "train_nonzero": 53,
+      "val_rows": 286,
+      "val_nonzero": 14,
+      "test_rows": 287,
+      "test_nonzero": 151,
+      "train_period": [
+        "2015-02-05",
+        "2024-04-12"
+      ],
+      "test_period": [
+        "2025-06-05",
+        "2026-07-28"
+      ]
+    },
+    "nifty": {
+      "train_rows": 2204,
+      "train_nonzero": 15,
+      "val_rows": 275,
+      "val_nonzero": 30,
+      "test_rows": 276,
+      "test_nonzero": 166,
+      "train_period": [
+        "2015-02-05",
+        "2024-03-28"
+      ],
+      "test_period": [
+        "2025-06-16",
+        "2026-07-28"
+      ]
+    }
+  }
+}
