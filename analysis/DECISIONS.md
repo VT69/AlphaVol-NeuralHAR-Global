@@ -34,6 +34,7 @@ Every design decision is logged **before** it is acted on: date, options conside
 | D21 | 2026-10-10 | Claude | Sealed-holdout guard enforced in code (`alphavol/io.py`) | In effect |
 | D22 | 2026-10-10 | Claude | BTC microstructure recomputed causally from 5-min bars; implied-vol timing | In effect |
 | D23 | 2026-10-10 | Claude | Dataset builder: pure function on raw frames; groups explicit; pending groups recorded | In effect |
+| D24 | 2026-10-10 | Claude | Intraday SPX/NIFTY data: recommendation only; Garman–Klass stays primary | Recommendation (author decision) |
 
 ---
 
@@ -125,3 +126,12 @@ Every design decision is logged **before** it is acted on: date, options conside
 
 ### D23 — 2026-10-10 — Dataset builder design
 * **Choice.** `alphavol.features.build_dataset(asset, raw: RawInputs, cfg, groups, pending)` is a pure function of in-memory raw frames. Loading is separate, so the same code builds development data and (Step 4) the sealed holdout. Every feature group must be listed explicitly. A requested group whose input is missing raises `MissingDataError` unless the group is in `pending`, in which case it is omitted and recorded in the manifest. The output keeps exogenous NaNs plus `<group>_missing` indicators; imputation happens inside models using training-window statistics only.
+
+### D24 — 2026-10-10 — Is genuine 5-minute data for SPX/NIFTY accessible? (research; no switch)
+* **Findings** (web search 2026-10-10; vendor sites unreachable from the sandbox, so terms not fully verified):
+  * **Oxford-Man Realized Library:** discontinued, last S&P 500 values June 2022, no replacement planned; its data may not be redistributed ([Realized Library](https://realized.oxford-man.ox.ac.uk/)). Not usable for 2015–2026.
+  * **SPX — FirstRate Data:** index product with 1/5-minute bars from 2008-01-02 to July 2026, one-off purchase plus optional update subscription ([firstratedata.com/i/index/SPX](https://firstratedata.com/i/index/SPX)). The SPX price was not shown; a comparable product is $299.95. Licence terms for publication were not confirmed.
+  * **SPX — VOLARE** (arXiv:2602.19732, "VOLatility Archive for Realized Estimates"): coverage and licence **not verified**.
+  * **NIFTY:** no verified licensed source found. Community datasets exist (Kaggle "NSE – Nifty 50 Index Minute data", listed CC0; GitHub repositories) but their upstream provenance is undocumented. NSE index data is exchange-proprietary, so a CC0 label on a repackaged copy does not establish the right to use it in a publication.
+* **Options.** (a) Buy FirstRate SPX 5-minute data and use intraday RV for SPX only; (b) use community NIFTY minute data despite unclear licensing; (c) keep Garman–Klass for both and report intraday RV as future work, or as a robustness check on SPX if (a) is bought.
+* **Recommendation.** (c) now. (a) if the author is willing to purchase and confirms the licence permits publishing derived results. **Do not use (b)** in a published paper without written licence confirmation. **No switch has been made**; GK remains the primary target per R2.
