@@ -1,0 +1,99 @@
+{
+  "table5_mcs_HAR_alignment": {
+    "btc": {
+      "committed": 0.7133119307380934,
+      "candidates": {
+        "end_aligned_correct_actuals": 0.31840294870142066,
+        "front_aligned_HAR[:n]_vs_actuals_file[:n]": 0.7133119307380937,
+        "front_aligned_HAR[:n]_vs_HAR_actuals[:n]": 0.9510939613340146,
+        "HAR_tail_vs_actuals_file_tail": 0.31840294870142066
+      },
+      "exact_match": [
+        "front_aligned_HAR[:n]_vs_actuals_file[:n]"
+      ]
+    },
+    "spx": {
+      "committed": 5.407347176881077,
+      "candidates": {
+        "end_aligned_correct_actuals": 3.896580898088022,
+        "front_aligned_HAR[:n]_vs_actuals_file[:n]": 5.407347176881099,
+        "front_aligned_HAR[:n]_vs_HAR_actuals[:n]": 3.628682523390306,
+        "HAR_tail_vs_actuals_file_tail": 3.896580898088022
+      },
+      "exact_match": [
+        "front_aligned_HAR[:n]_vs_actuals_file[:n]"
+      ]
+    },
+    "nifty": {
+      "committed": 2.137405335355865,
+      "candidates": {
+        "end_aligned_correct_actuals": 2.3304588500528762,
+        "front_aligned_HAR[:n]_vs_actuals_file[:n]": 2.137405335355862,
+        "front_aligned_HAR[:n]_vs_HAR_actuals[:n]": 2.5169712418332053,
+        "HAR_tail_vs_actuals_file_tail": 2.3304588500528762
+      },
+      "exact_match": [
+        "front_aligned_HAR[:n]_vs_actuals_file[:n]"
+      ]
+    }
+  },
+  "turnover_cost_attribution": {
+    "BTC": {
+      "annual_cost_pct": {
+        "HAR": 1.345,
+        "HAR-S": 1.049,
+        "Neural-HAR": 0.962
+      },
+      "NeuralHAR_minus_HAR_cost_pp": -0.383,
+      "NeuralHAR_minus_HAR_ann_return_pp": 7.61
+    },
+    "NIFTY": {
+      "annual_cost_pct": {
+        "HAR": 0.639,
+        "HAR-S": 2.082,
+        "Neural-HAR": 6.103
+      },
+      "NeuralHAR_minus_HAR_cost_pp": 5.465,
+      "NeuralHAR_minus_HAR_ann_return_pp": -9.37
+    },
+    "SPX": {
+      "annual_cost_pct": {
+        "HAR": 1.178,
+        "HAR-S": 7.303,
+        "Neural-HAR": 4.605
+      },
+      "NeuralHAR_minus_HAR_cost_pp": 3.427,
+      "NeuralHAR_minus_HAR_ann_return_pp": -34.6
+    }
+  },
+  "insample_R2": {
+    "BTC|HAR": {
+      "R2": 0.4037,
+      "N": 2744
+    },
+    "BTC|HAR-S": {
+      "R2": 0.1873,
+      "N": 1095
+    },
+    "NIFTY50|HAR": {
+      "R2": 0.0399,
+      "N": 2755
+    },
+    "NIFTY50|HAR-S": {
+      "R2": 0.0305,
+      "N": 719
+    },
+    "SPX|HAR": {
+      "R2": 0.0885,
+      "N": 2862
+    },
+    "SPX|HAR-S": {
+      "R2": 0.0339,
+      "N": 755
+    }
+  },
+  "main_pdf_unresolved_refs": [
+    "112   The full-sample OOS metrics for the baseline models are reported in Table ??; the harmonized trailing-",
+    "145   0.12). Regime-conditional OOS forecast accuracy is provided in Table ??. Ultimately, we do not find robust"
+  ]
+}

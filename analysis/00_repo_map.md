@@ -118,11 +118,11 @@ SPX: matrix 2,862 × 13, HAR-S complete rows 755, Neural test 287 from 2025-06-0
 
 ## 5. Findings from the trace (data-verified, carried into Phases 2–4)
 
-1. **HAR is mis-specified as a 2-step-ahead model.** In every matrix, `RV_d == log_RV.shift(1)` (max |Δ| = 0.0 for BTC) and `Target_RV == log_RV.shift(-1)`. The regression therefore predicts log RV(t+1) from log RV(t−1, …) and **never uses log RV(t)**, the most informative lag. For BTC, corr(Target, log_RV_t) = 0.703 vs corr(Target, RV_d) = 0.549. All exogenous `_lag1` features skip day t in the same way. `04_methodology.tex` writes the 1-step equation. *(`data_loader.py:323-325`, `compute_rv.py:38-40`, `build_feature_matrix.py:124-130`)*
+1. **HAR is mis-specified as a 2-step-ahead model.** In every matrix, `RV_d == log_RV.shift(1)` (max |Δ| = 0.0 for BTC) and `Target_RV == log_RV.shift(-1)`. The regression therefore predicts log RV(t+1) from log RV(t−1, …) and **never uses log RV(t)**, the most informative lag. For BTC, corr(Target, log_RV_t) = 0.703 vs corr(Target, RV_d) = 0.549. All exogenous `_lag1` features skip day t in the same way. `04_methodology.tex` writes the 1-step equation. *(`data_loader.py:98-100`, `compute_rv.py:38-40`, `build_feature_matrix.py:124-130`)*
 2. **For SPX/NIFTY, `RV_d` is not even a clean 1-day lag after row drops.** max |RV_d − log_RV.shift(1)| = 0.0027 (SPX) and 3.10 (NIFTY). The lags were computed on the raw calendar before rows with zero GK variance were dropped. The SPX/NIFTY calendars also contain 35–39-day gaps (trace `calendar_gaps_days_value_counts`).
 3. **The SPX/NIFTY RV proxy has almost no persistence.** corr(log_RV_{t+1}, log_RV_t) = 0.118 (SPX) and 0.073 (NIFTY), vs 0.703 for BTC's 5-min RV. A single-bar Garman–Klass proxy is extremely noisy. Phase 2 will profile it.
 4. **Sentiment is essentially absent.** `FinBERT_score_lag1` is exactly 0 on 98.5 % of BTC rows, 92.3 % of SPX and 92.3 % of NIFTY. BTC has FinBERT scores on **43 days only (2026-06-18 → 2026-07-30), all inside the Neural-HAR test window**, so the model never sees non-zero BTC sentiment in training. Of 2,428 headlines, 2,310 are from 2025–2026 (`phase1_trace.json → news`).
-5. **`illiq_lag1` is identically 0 for all assets.** It is a placeholder (`data_loader.py:445-447`) because `illiq` is never lagged (`exo_cols` at `:439` omits it). It still enters HAR-S/Neural-HAR, and `table2_insample_coefs` reports a p-value (0.095) for an all-zero regressor.
+5. **`illiq_lag1` is identically 0 for all assets.** It is a placeholder (`data_loader.py:220-222`) because `illiq` is never lagged (`exo_cols` at `:214` omits it). It still enters HAR-S/Neural-HAR, and `table2_insample_coefs` reports a p-value (0.095) for an all-zero regressor.
 6. **`credit_spread_lag1` only exists from 2023-05-17.** It is NaN on 1,644/2,744 BTC rows and 2,107/2,862 SPX rows. HAR-S drops those rows in training, while Neural-HAR fills them with **0** (`train_neural_har.py:232`). The network therefore receives a feature that is 0 before mid-2023 and about 3–4 afterwards, which works as a time-period indicator.
 7. **Regimes are not regimes.** `gmsi` exists only where credit spread exists. `pd.qcut` then splits only the post-2023 data, and `.ffill().bfill()` labels **every pre-2023 day "high"** (BTC "high" = 1,933 rows from 2019-01-23; "medium" starts 2024-01-26; "low" starts 2024-11-08). The terciles also use the full sample (look-ahead), and the paper says the regimes come from a Hidden Markov Model, which does not exist in the code.
 8. **DVOL never joins.** `btc_deribit_dvol.parquet` has a RangeIndex (0…999) rather than dates, so `dvol` never appears in the matrix.
@@ -165,7 +165,7 @@ Python version: not stated anywhere. `train_neural_har.py` uses `torch.load(...,
 | torch seed | **Not set** in the live path. `torch.manual_seed(42)` exists only in dead `neural_har.train_model` (`neural_har.py:172`). | |
 | Optuna sampler seed | **Not set** (`optuna.create_study(direction="minimize")`, `train_neural_har.py:136`) | |
 | `torch.backends.cudnn.deterministic` / `use_deterministic_algorithms` | Not handled | |
-| MCS bootstrap | Seeded (`seed=42`) | `mcs_test.py:448` |
+| MCS bootstrap | Seeded (`seed=42`) | `mcs_test.py:197` |
 | Data splits | Regenerated each run from chronological fractions (deterministic given data). Not saved. | `train_neural_har.py:236-238` |
 | Raw data | Re-downloading is non-reproducible (vendor revisions, API windows such as AlphaVantage's "most recent ~1000 articles"). Committed raw parquet is the only stable source. | `fetch_news_extended.py:80-81` |
 | Neural-HAR artefacts | **Forecasts and weights absent.** The paper appendix claims "the exact weights of the out-of-sample models evaluated in this study" are in the repo. | `ls data/processed`, `appendix.tex` |
@@ -192,7 +192,7 @@ Python version: not stated anywhere. `train_neural_har.py` uses `torch.load(...,
 
 | Claim (where) | Code reality |
 |---|---|
-| Regimes from a Hidden Markov Model (`01_introduction.tex`, `06_regime_analysis.tex`, `research_summary.md`) | Full-sample `pd.qcut` terciles of `credit_spread − term_slope`, back-filled (`data_loader.py:425-430`) |
+| Regimes from a Hidden Markov Model (`01_introduction.tex`, `06_regime_analysis.tex`, `research_summary.md`) | Full-sample `pd.qcut` terciles of `credit_spread − term_slope`, back-filled (`data_loader.py:200-205`) |
 | "Quarter-Kelly position sizing" (`07_economic_significance.tex`, README) | `kelly_fraction` is accepted but never used. `mu_hat=None`, so the strategy is pure `target_vol/σ̂` (`vol_targeting.py:54-59, 81`). |
 | "Optuna … 40 trials at each step" (`04_methodology.tex`, README) | Optuna runs **once**, 20 trials per architecture, on the initial train/val split (`train_neural_har.py:267-276`) |
 | "initial minimum training window of 252 days" for Neural-HAR (`04_methodology.tex`) | 80 %/10 % fractions, so the first training window is 2,195 (BTC) / 2,289 (SPX) / 2,204 (NIFTY) rows |
